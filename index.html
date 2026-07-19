@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Tem Giường</title>
+    <style>
+        /* Giao diện điều khiển */
+        :root {
+            --h1: 1cm;
+            --s1: 0.7;
+            --h2: 0.6cm;
+            --s2: 0.7;
+            --pt: 0.1cm; /* Khoảng cách từ viền trong đến dòng 1 */
+            --sp: 0.1cm; /* Khoảng cách giữa 2 dòng */
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 380px;
+            background: white;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .sidebar h2 { margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row .form-group { flex: 1; }
+        
+        label { font-weight: bold; font-size: 0.85rem; color: #495057; }
+        input, textarea {
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus { border-color: #007bff; outline: none; }
+        textarea { resize: vertical; min-height: 80px; }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+        .btn-generate { background: #007bff; color: white; }
+        .btn-print { background: #28a745; color: white; }
+
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Định dạng trang in và tem */
+        #print-area {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .page {
+            width: 21cm;
+            height: 29.7cm;
+            background: white;
+            /* Căn giữa khung tem (3x6=18cm ngang, 8x3=24cm dọc) trên trang A4 */
+            padding-top: 2.85cm; 
+            padding-left: 1.5cm;
+            box-sizing: border-box;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: grid;
+            grid-template-columns: repeat(3, 6cm);
+            grid-template-rows: repeat(8, 3cm);
+        }
+
+        .label {
+            width: 6cm;
+            height: 3cm;
+            border: 1pt solid black; /* Viền cắt 1pt */
+            box-sizing: border-box;
+            position: relative;
+            background: white;
+            overflow: hidden;
+            font-family: "UTM HelvetIns", Arial, sans-serif; /* Phông chữ yêu cầu */
+            text-transform: uppercase;
+            color: black;
+        }
+
+        .inner-border {
+            position: absolute;
+            top: 5mm;
+            bottom: 5mm;
+            left: 5mm;
+            right: 5mm;
+            border: 1.5mm solid black; /* Viền trong 1.5mm */
+            pointer-events: none;
+        }
+
+        .text-wrapper {
+            position: absolute;
+            top: 5mm; bottom: 5mm; left: 5mm; right: 5mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .line1 {
+            font-size: var(--h1);
+            line-height: var(--h1);
+            margin-top: var(--pt);
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .line2 {
+            font-size: var(--h2);
+            line-height: var(--h2);
+            margin-top: var(--sp);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .txt-scale1 { display: inline-block; transform: scaleX(var(--s1)); transform-origin: center top; }
+        .txt-scale2 { display: inline-block; transform: scaleX(var(--s2)); transform-origin: center top; }
+
+        /* Chế độ in */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { position: absolute; left: 0; top: 0; width: 21cm; gap: 0; margin: 0; padding: 0; }
+            .page { 
+                box-shadow: none; 
+                page-break-after: always; 
+                margin: 0; 
+            }
+            @page { size: A4 portrait; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Cấu hình Tem Giường</h2>
+        
+        <div class="form-group">
+            <label>Nội dung đơn vị (Dòng 2)</label>
+            <input type="text" id="unit" value="CĐ1 - C152" oninput="generateLabels()">
+        </div>
+
+        <div class="form-group">
+            <label>Danh sách tên (Mỗi tên 1 dòng)</label>
+            <textarea id="names" oninput="generateLabels()">NGUYỄN VĂN A
+TRẦN VĂN B
+LÊ THỊ C</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Số bản sao mỗi tên</label>
+            <input type="number" id="copies" value="1" min="1" oninput="generateLabels()">
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #ddd; width: 100%;">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Cao chữ dòng 1 (cm)</label>
+                <input type="number" id="h1" step="0.1" value="1.0" oninput="updateStyles()">
+            </div>
+            <div class="form-group">
+                <label>Co ngang dòng 1 (%)</label>
+                <input type="number" id="s1" step="5" value="70" oninput="updateStyles()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Cao chữ dòng 2 (cm)</label>
+                <input type="number" id="h2" step="0.1" value="0.6" oninput="updateStyles()">
+            </div>
+            <div class="form-group">
+                <label>Co ngang dòng 2 (%)</label>
+                <input type="number" id="s2" step="5" value="70" oninput="updateStyles()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Cách lề trên (cm)</label>
+                <input type="number" id="pt" step="0.05" value="0.1" oninput="updateStyles()">
+            </div>
+            <div class="form-group">
+                <label>Cách giữa 2 dòng (cm)</label>
+                <input type="number" id="sp" step="0.05" value="0.1" oninput="updateStyles()">
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-generate" onclick="generateLabels()">Cập nhật (Preview)</button>
+            <button class="btn-print" onclick="window.print()">In A4</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div id="print-area">
+            <!-- Trang in sẽ được tạo ở đây qua JS -->
+        </div>
+    </div>
+
+    <script>
+        function updateStyles() {
+            const root = document.documentElement;
+            root.style.setProperty('--h1', document.getElementById('h1').value + 'cm');
+            root.style.setProperty('--s1', document.getElementById('s1').value / 100);
+            root.style.setProperty('--h2', document.getElementById('h2').value + 'cm');
+            root.style.setProperty('--s2', document.getElementById('s2').value / 100);
+            root.style.setProperty('--pt', document.getElementById('pt').value + 'cm');
+            root.style.setProperty('--sp', document.getElementById('sp').value + 'cm');
+        }
+
+        function generateLabels() {
+            const namesText = document.getElementById('names').value;
+            const names = namesText.split('\n').map(n => n.trim()).filter(n => n !== '');
+            const unit = document.getElementById('unit').value.trim();
+            const copies = parseInt(document.getElementById('copies').value) || 1;
+
+            const allLabels = [];
+            names.forEach(name => {
+                for (let i = 0; i < copies; i++) {
+                    allLabels.push(name);
+                }
+            });
+
+            const printArea = document.getElementById('print-area');
+            printArea.innerHTML = '';
+
+            if (allLabels.length === 0) return;
+
+            // Chia thành các trang, mỗi trang 24 tem (3 dọc x 8 ngang)
+            for (let i = 0; i < allLabels.length; i += 24) {
+                const pageData = allLabels.slice(i, i + 24);
+                const pageEl = document.createElement('div');
+                pageEl.className = 'page';
+
+                pageData.forEach(name => {
+                    pageEl.innerHTML += `
+                        <div class="label">
+                            <div class="inner-border"></div>
+                            <div class="text-wrapper">
+                                <div class="line1"><span class="txt-scale1">${name}</span></div>
+                                <div class="line2"><span class="txt-scale2">${unit}</span></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                printArea.appendChild(pageEl);
+            }
+        }
+
+        // Khởi tạo ban đầu
+        updateStyles();
+        generateLabels();
+    </script>
+</body>
+</html>
