@@ -5,14 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tạo Tem Giường</title>
     <style>
-        /* Giao diện điều khiển */
+        /* 1. KHOAI BÁO PHÔNG CHỮ TỪ FILE LOCAL/GITHUB */
+        @font-face {
+            font-family: 'UTM HelvetIns';
+            src: url('UTM HelvetIns.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* 2. BIẾN ĐIỀU KHIỂN & CÀI ĐẶT MẶC ĐỊNH */
         :root {
             --h1: 1cm;
             --s1: 0.7;
             --h2: 0.6cm;
             --s2: 0.7;
-            --pt: 0.1cm; /* Khoảng cách từ viền trong đến dòng 1 */
-            --sp: 0.1cm; /* Khoảng cách giữa 2 dòng */
+            --pt: 0.1cm; 
+            --sp: 0.1cm; 
         }
 
         body {
@@ -24,21 +32,22 @@
             overflow: hidden;
         }
 
+        /* 3. GIAO DIỆN BẢNG ĐIỀU KHIỂN (RESPONSIVE) */
         .sidebar {
-            width: 380px;
+            width: 350px;
+            min-width: 350px;
             background: white;
             padding: 20px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             z-index: 10;
         }
 
         .sidebar h2 { margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-        
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
         .form-row { display: flex; gap: 10px; }
         .form-row .form-group { flex: 1; }
         
@@ -49,82 +58,89 @@
             border-radius: 4px;
             font-family: inherit;
             font-size: 0.9rem;
-            transition: border-color 0.2s;
         }
         input:focus, textarea:focus { border-color: #007bff; outline: none; }
         textarea { resize: vertical; min-height: 80px; }
         
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 5px; }
         button {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
             font-size: 1rem;
-            transition: opacity 0.2s;
+            color: white;
         }
-        button:hover { opacity: 0.9; }
-        .btn-generate { background: #007bff; color: white; }
-        .btn-print { background: #28a745; color: white; }
+        .btn-generate { background: #007bff; }
+        .btn-print { background: #28a745; }
 
+        /* 4. KHUNG HIỂN THỊ CHÍNH (HỖ TRỢ CUỘN TRÊN MOBILE) */
         .main {
             flex: 1;
-            overflow-y: auto;
-            padding: 30px;
+            overflow: auto;
+            padding: 20px;
+            background: #525659; /* Màu nền giống trình đọc PDF */
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* Định dạng trang in và tem */
         #print-area {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 20px;
         }
 
+        /* 5. CẤU TRÚC TRANG IN VÀ TEM */
         .page {
             width: 21cm;
             height: 29.7cm;
             background: white;
-            /* Căn giữa khung tem (3x6=18cm ngang, 8x3=24cm dọc) trên trang A4 */
-            padding-top: 2.85cm; 
-            padding-left: 1.5cm;
+            /* 
+               Tính toán lề để căn giữa khung lưới trên A4:
+               - Rộng lưới: (3 * 6cm) + (2 * 0.2cm gap) = 18.4cm. Cần lề trái: (21 - 18.4)/2 = 1.3cm
+               - Cao lưới: (8 * 3cm) + (7 * 0.2cm gap) = 25.4cm. Cần lề trên: (29.7 - 25.4)/2 = 2.15cm
+            */
+            padding-top: 2.15cm; 
+            padding-left: 1.3cm;
             box-sizing: border-box;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             display: grid;
             grid-template-columns: repeat(3, 6cm);
             grid-template-rows: repeat(8, 3cm);
+            gap: 2mm; /* Khoảng cách 2 tem: 2mm */
         }
 
         .label {
             width: 6cm;
             height: 3cm;
-            border: 1pt solid black; /* Viền cắt 1pt */
+            border: 1pt solid #ccc; /* Viền cắt nhạt hơn để dễ cắt */
             box-sizing: border-box;
             position: relative;
             background: white;
             overflow: hidden;
-            font-family: "UTM HelvetIns", Arial, sans-serif; /* Phông chữ yêu cầu */
+            font-family: 'UTM HelvetIns', Arial, sans-serif;
             text-transform: uppercase;
             color: black;
         }
 
+        /* Viền trong cách mép 3mm */
         .inner-border {
             position: absolute;
-            top: 5mm;
-            bottom: 5mm;
-            left: 5mm;
-            right: 5mm;
-            border: 1.5mm solid black; /* Viền trong 1.5mm */
+            top: 3mm;
+            bottom: 3mm;
+            left: 3mm;
+            right: 3mm;
+            border: 1.5mm solid black;
             pointer-events: none;
         }
 
+        /* Vùng chứa chữ cũng lùi 3mm để không đè lên viền */
         .text-wrapper {
             position: absolute;
-            top: 5mm; bottom: 5mm; left: 5mm; right: 5mm;
+            top: 3mm; bottom: 3mm; left: 3mm; right: 3mm;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -149,16 +165,43 @@
         .txt-scale1 { display: inline-block; transform: scaleX(var(--s1)); transform-origin: center top; }
         .txt-scale2 { display: inline-block; transform: scaleX(var(--s2)); transform-origin: center top; }
 
-        /* Chế độ in */
+        /* 6. ĐIỀU CHỈNH GIAO DIỆN CHO ĐIỆN THOẠI MÀN HÌNH NHỎ */
+        @media (max-width: 800px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                overflow: auto;
+            }
+            .sidebar {
+                width: 100%;
+                min-width: unset;
+                box-sizing: border-box;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            .main {
+                overflow: visible;
+                padding: 10px;
+                align-items: flex-start; /* Cho phép cuộn ngang từ mép trái */
+            }
+            #print-area {
+                /* Giữ nguyên kích thước vật lý của A4, cho phép cuộn ngang trên điện thoại */
+                transform-origin: top left;
+                transform: scale(0.45); /* Thu nhỏ để dễ nhìn trên điện thoại */
+                margin-bottom: -15cm; /* Bù trừ khoảng trống do scale */
+            }
+        }
+
+        /* 7. CHẾ ĐỘ IN (PRINT) */
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
-            #print-area { position: absolute; left: 0; top: 0; width: 21cm; gap: 0; margin: 0; padding: 0; }
+            #print-area { position: absolute; left: 0; top: 0; width: 21cm; gap: 0; margin: 0; padding: 0; transform: none; }
             .page { 
                 box-shadow: none; 
                 page-break-after: always; 
                 margin: 0; 
             }
+            .label { border: 1pt solid black; } /* Khi in viền cắt hiện rõ đen */
             @page { size: A4 portrait; margin: 0; }
         }
     </style>
@@ -185,26 +228,26 @@ LÊ THỊ C</textarea>
             <input type="number" id="copies" value="1" min="1" oninput="generateLabels()">
         </div>
 
-        <hr style="border: 0; border-top: 1px solid #ddd; width: 100%;">
+        <hr style="border: 0; border-top: 1px solid #ddd; width: 100%; margin: 5px 0;">
 
         <div class="form-row">
             <div class="form-group">
-                <label>Cao chữ dòng 1 (cm)</label>
+                <label>Cao chữ 1 (cm)</label>
                 <input type="number" id="h1" step="0.1" value="1.0" oninput="updateStyles()">
             </div>
             <div class="form-group">
-                <label>Co ngang dòng 1 (%)</label>
+                <label>Co ngang 1 (%)</label>
                 <input type="number" id="s1" step="5" value="70" oninput="updateStyles()">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
-                <label>Cao chữ dòng 2 (cm)</label>
+                <label>Cao chữ 2 (cm)</label>
                 <input type="number" id="h2" step="0.1" value="0.6" oninput="updateStyles()">
             </div>
             <div class="form-group">
-                <label>Co ngang dòng 2 (%)</label>
+                <label>Co ngang 2 (%)</label>
                 <input type="number" id="s2" step="5" value="70" oninput="updateStyles()">
             </div>
         </div>
@@ -215,20 +258,20 @@ LÊ THỊ C</textarea>
                 <input type="number" id="pt" step="0.05" value="0.1" oninput="updateStyles()">
             </div>
             <div class="form-group">
-                <label>Cách giữa 2 dòng (cm)</label>
+                <label>Cách 2 dòng (cm)</label>
                 <input type="number" id="sp" step="0.05" value="0.1" oninput="updateStyles()">
             </div>
         </div>
 
         <div class="btn-group">
-            <button class="btn-generate" onclick="generateLabels()">Cập nhật (Preview)</button>
+            <button class="btn-generate" onclick="generateLabels()">Cập nhật</button>
             <button class="btn-print" onclick="window.print()">In A4</button>
         </div>
     </div>
 
     <div class="main">
         <div id="print-area">
-            <!-- Trang in sẽ được tạo ở đây qua JS -->
+            <!-- Trang in được tạo tự động -->
         </div>
     </div>
 
@@ -261,7 +304,7 @@ LÊ THỊ C</textarea>
 
             if (allLabels.length === 0) return;
 
-            // Chia thành các trang, mỗi trang 24 tem (3 dọc x 8 ngang)
+            // Mỗi trang 24 tem
             for (let i = 0; i < allLabels.length; i += 24) {
                 const pageData = allLabels.slice(i, i + 24);
                 const pageEl = document.createElement('div');
@@ -282,7 +325,6 @@ LÊ THỊ C</textarea>
             }
         }
 
-        // Khởi tạo ban đầu
         updateStyles();
         generateLabels();
     </script>
