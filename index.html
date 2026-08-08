@@ -73,6 +73,10 @@
         .btn-print.room-print { background: #d93025; }
         .btn-print.helmet-print { background: #15803d; }
 
+        .btn-toggle-advanced { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; text-align: center; margin-top: 10px; }
+        .advanced-settings { display: none; padding-top: 15px; border-top: 1px dashed #cbd5e1; margin-top: 5px; flex-direction: column; gap: 15px; }
+        .advanced-settings.active { display: flex; }
+
         .preview-wrapper { flex: 1; overflow: auto; background: var(--dark-bg); padding: 30px; display: flex; justify-content: center; align-items: flex-start; }
         .print-area { display: flex; flex-direction: column; gap: 20px; transform-origin: top center; }
 
@@ -91,16 +95,27 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: grid; grid-template-columns: repeat(3, 6cm); grid-template-rows: repeat(8, 3cm); gap: 2mm; 
         }
         .label-bed { width: 6cm; height: 3cm; border: 1pt solid #ccc; box-sizing: border-box; position: relative; background: white; overflow: hidden; font-family: 'UTM HelvetIns', sans-serif; text-transform: uppercase; color: black; }
-        .label-bed .inner-border { position: absolute; top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); border: var(--bt) solid black; pointer-events: none; }
-        .label-bed .text-wrapper { position: absolute; top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); display: flex; flex-direction: column; align-items: center; }
+        
+        .label-bed .inner-border { 
+            position: absolute; 
+            top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); 
+            border: var(--bt) solid black; pointer-events: none; 
+        }
+        
+        .label-bed .text-wrapper { 
+            position: absolute; 
+            top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); 
+            display: flex; flex-direction: column; align-items: center; 
+        }
+        
         .label-bed .line1 { font-size: var(--h1); line-height: var(--h1); margin-top: var(--pt); text-align: center; white-space: nowrap; }
         .label-bed .line2 { font-size: var(--h2); line-height: var(--h2); margin-top: var(--sp); text-align: center; white-space: nowrap; }
-        .txt-scale1 { display: inline-block; transform: scaleX(var(--s1)); transform-origin: center top; }
-        .txt-scale2 { display: inline-block; transform: scaleX(var(--s2)); transform-origin: center top; }
+        .txt-scale1 { display: inline-block; transform: scaleX(var(--s1)); transform-origin: center top; white-space: nowrap;}
+        .txt-scale2 { display: inline-block; transform: scaleX(var(--s2)); transform-origin: center top; white-space: nowrap;}
 
         /* ================= CSS TEM PHÒNG ================= */
         .room-block { background: #f9fafb; border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin-bottom: 15px; }
-        .room-block-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; }
+        .room-block-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; align-items: center;}
         .btn-del-room { background: #ff4d4f; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.75rem; }
         .room-inputs { display: grid; grid-template-columns: 20px 1fr 1fr; gap: 5px; align-items: center; margin-bottom: 5px; }
         .room-inputs span { font-weight: bold; font-size: 0.8rem; text-align: center; }
@@ -117,17 +132,18 @@
         .room-list-print { width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 5px; }
         .room-row-print {
             display: grid; grid-template-columns: 40px 1fr 120px; font-size: 20pt; 
-            text-transform: uppercase; align-items: center; 
-            line-height: 0.75; /* CHỈNH SỬA THEO YÊU CẦU MỚI */
-            white-space: nowrap; 
+            text-transform: uppercase; align-items: center; line-height: 0.75; white-space: nowrap; 
         }
         .room-row-print > span { padding-top: 12px; padding-bottom: 8px; }
-        .room-row-print .r-name { padding-left: 0; overflow: hidden; text-overflow: ellipsis; }
+        .room-row-print .r-name { 
+            padding-left: 0; overflow: hidden; text-overflow: ellipsis; 
+            min-width: 0; 
+        }
         .room-row-print .r-unit { text-align: left; }
 
         /* ================= CSS TEM MŨ BẢO HIỂM ================= */
         .page-helmet {
-            width: 297mm; height: 210mm; /* A4 Ngang */
+            width: 297mm; height: 210mm; 
             background: #fff; padding: 15mm 0; box-sizing: border-box;
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
             box-shadow: 0 8px 24px rgba(0,0,0,0.4); margin-bottom: 10mm;
@@ -138,11 +154,12 @@
             background-color: #27318b; border-radius: 50% / 50%; position: relative;
             display: flex; align-items: center; justify-content: center; box-sizing: border-box;
             overflow: hidden; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-            border: 1pt solid #ccc; /* Viền in nhạt để dễ cắt */
+            border: none; /* Loại bỏ viền nhạt hiển thị ở chế độ xem trước */
         }
         .tag-ellipse::before {
             content: ''; position: absolute; top: 3mm; bottom: 3mm; left: 3mm; right: 3mm;
-            border: 0.5mm solid #ffffff; border-radius: 50% / 50%; pointer-events: none;
+            border: 0.75mm solid #ffffff; /* Tăng độ dày viền trắng lên gấp rưỡi (từ 0.5mm lên 0.75mm) */
+            border-radius: 50% / 50%; pointer-events: none;
         }
         .text-common {
             color: #ffffff !important; font-family: 'UTM HelvetIns', Arial, sans-serif;
@@ -166,10 +183,10 @@
             .app-container, .preview-wrapper { display: block; padding: 0; overflow: visible; height: auto; background: white;}
             .print-area { position: absolute; left: 0; top: 0; width: 100%; gap: 0; margin: 0; padding: 0; transform: none !important; }
             .page-bed, .page-room, .page-helmet { box-shadow: none; page-break-after: always; margin: 0; border: none; }
-            .label-bed, .label-room, .tag-ellipse { border: 1pt solid black; } 
+            /* Cập nhật viền in: Loại bỏ .tag-ellipse khỏi thuộc tính vẽ viền đen */
+            .label-bed, .label-room { border: 1pt solid black; } 
         }
     </style>
-    <!-- Trình quản lý in (Ngang/Dọc) tự động cập nhật qua JS -->
     <style id="print-page-style">
         @page { size: A4 portrait; margin: 0; }
     </style>
@@ -213,21 +230,27 @@
                         <button class="btn-sm" onclick="clearBedTable()">Xóa toàn bộ</button>
                     </div>
                 </div>
-                <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
-                <div class="form-row">
-                    <div class="form-group"><label>Số bản sao/tên</label><input type="number" id="bed-copies" value="1" min="1" oninput="generateBedLabels()"></div>
-                    <div class="form-group"><label>Viền cách mép (cm)</label><input type="number" id="bed-bm" step="0.05" value="0.4" oninput="updateBedStyles()"></div>
+                
+                <div class="form-group">
+                    <label>Số bản sao/tên</label>
+                    <input type="number" id="bed-copies" value="1" min="1" oninput="generateBedLabels()">
                 </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Cao chữ 1 (cm)</label><input type="number" id="bed-h1" step="0.1" value="0.9" oninput="updateBedStyles()"></div>
-                    <div class="form-group"><label>Co ngang 1 (%)</label><input type="number" id="bed-s1" step="5" value="60" oninput="updateBedStyles()"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Cao chữ 2 (cm)</label><input type="number" id="bed-h2" step="0.1" value="0.5" oninput="updateBedStyles()"></div>
-                    <div class="form-group"><label>Co ngang 2 (%)</label><input type="number" id="bed-s2" step="5" value="70" oninput="updateBedStyles()"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Cách lề trên (cm)</label><input type="number" id="bed-pt" step="0.05" value="0.3" oninput="updateBedStyles()"></div>
+
+                <div class="btn-toggle-advanced" onclick="toggleAdvanced('adv-bed')">⚙ Định dạng chi tiết</div>
+                
+                <div id="adv-bed" class="advanced-settings">
+                    <div class="form-row">
+                        <div class="form-group"><label>Viền cách mép (cm)</label><input type="number" id="bed-bm" step="0.05" value="0.4" oninput="updateBedStyles()"></div>
+                        <div class="form-group"><label>Cách lề trên (cm)</label><input type="number" id="bed-pt" step="0.05" value="0.3" oninput="updateBedStyles()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Cao chữ 1 (cm)</label><input type="number" id="bed-h1" step="0.1" value="0.9" oninput="updateBedStyles()"></div>
+                        <div class="form-group"><label>Co ngang 1 (%)</label><input type="number" id="bed-s1" step="5" value="60" oninput="updateBedStyles()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Cao chữ 2 (cm)</label><input type="number" id="bed-h2" step="0.1" value="0.5" oninput="updateBedStyles()"></div>
+                        <div class="form-group"><label>Co ngang 2 (%)</label><input type="number" id="bed-s2" step="5" value="70" oninput="updateBedStyles()"></div>
+                    </div>
                     <div class="form-group"><label>Cách 2 dòng (cm)</label><input type="number" id="bed-sp" step="0.05" value="0.2" oninput="updateBedStyles()"></div>
                 </div>
             </div>
@@ -249,14 +272,23 @@
                 <button class="btn-back" onclick="switchApp('home-screen')">Quay lại</button>
             </div>
             <div class="sidebar-content">
-                <div class="form-group">
-                    <label>Tiêu đề chung cho các phòng</label>
-                    <input type="text" id="room-global-title" value="PHÒNG Ở HỌC VIÊN - c460" oninput="generateRoomLabels()">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tiêu đề chung</label>
+                        <input type="text" id="room-global-title" value="PHÒNG Ở HỌC VIÊN - c460" oninput="generateRoomLabels()">
+                    </div>
+                    <div class="form-group" style="flex: 0 0 120px;">
+                        <label>Người / Phòng</label>
+                        <input type="number" id="room-capacity" value="5" min="1" max="10" onchange="rebuildRoomBlocks()">
+                    </div>
                 </div>
+                
                 <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
+                
                 <div id="room-blocks-container"></div>
                 <button class="btn-sm" style="width:100%; padding: 10px; font-weight:bold;" onclick="addRoomBlock()">+ THÊM PHÒNG MỚI</button>
             </div>
+            
             <div class="btn-group">
                 <button class="action-btn btn-generate" onclick="generateRoomLabels()">Cập nhật</button>
                 <button class="action-btn btn-print room-print" onclick="window.print()">In PDF / A4</button>
@@ -276,8 +308,8 @@
             </div>
             <div class="sidebar-content">
                 <div class="form-group">
-                    <label>Nhập Tên / Chức vụ (Mỗi người 1 dòng):</label>
-                    <textarea id="helmet-names" oninput="generateHelmetLabels()">NGUYỄN VĂN A
+                    <label>Nhập Tên (Mỗi người 1 dòng):</label>
+                    <textarea id="helmet-names" oninput="generateHelmetLabels()">NGUYỄN VĂN ANH TUẤN
 TRẦN THỊ B
 PHẠM VĂN C
 LÊ THỊ D
@@ -286,35 +318,33 @@ HOÀNG VĂN E
 VŨ VĂN G</textarea>
                 </div>
                 
-                <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
+                <div class="btn-toggle-advanced" onclick="toggleAdvanced('adv-helmet')">⚙ Định dạng chi tiết</div>
                 
-                <div class="form-group">
-                    <label>Tem Cơ quan - Dòng trên:</label>
-                    <input type="text" id="helmet-top-text" value="HỌC VIỆN KỸ THUẬT QUÂN SỰ" oninput="generateHelmetLabels()">
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-top-scale" value="75" oninput="generateHelmetLabels()"></div>
-                    <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-top-size" value="8" oninput="generateHelmetLabels()"></div>
-                    <div class="form-group"><label>Cách dưới (mm)</label><input type="number" id="helmet-top-gap" value="4" step="0.5" oninput="generateHelmetLabels()"></div>
-                </div>
-
-                <div class="form-group" style="margin-top: 10px;">
-                    <label>Tem Cơ quan - Dòng dưới:</label>
-                    <input type="text" id="helmet-bot-text" value="TIỂU ĐOÀN 4" oninput="generateHelmetLabels()">
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-bot-scale" value="75" oninput="generateHelmetLabels()"></div>
-                    <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-bot-size" value="10" oninput="generateHelmetLabels()"></div>
-                </div>
-
-                <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
-                
-                <div class="form-group">
-                    <label>Tem Tên (Bên phải):</label>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-name-scale" value="75" oninput="generateHelmetLabels()"></div>
-                    <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-name-size" value="12" oninput="generateHelmetLabels()"></div>
+                <div id="adv-helmet" class="advanced-settings">
+                    <div class="form-group">
+                        <label>Tem Cơ quan - Dòng trên:</label>
+                        <input type="text" id="helmet-top-text" value="HỌC VIỆN KỸ THUẬT QUÂN SỰ" oninput="generateHelmetLabels()">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-top-scale" value="75" oninput="generateHelmetLabels()"></div>
+                        <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-top-size" value="8" oninput="generateHelmetLabels()"></div>
+                        <div class="form-group"><label>Cách dưới (mm)</label><input type="number" id="helmet-top-gap" value="4" step="0.5" oninput="generateHelmetLabels()"></div>
+                    </div>
+                    <hr style="border: 0; border-top: 1px dashed #e5e7eb; width: 100%; margin: 5px 0;">
+                    <div class="form-group">
+                        <label>Tem Cơ quan - Dòng dưới:</label>
+                        <input type="text" id="helmet-bot-text" value="TIỂU ĐOÀN 4" oninput="generateHelmetLabels()">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-bot-scale" value="75" oninput="generateHelmetLabels()"></div>
+                        <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-bot-size" value="10" oninput="generateHelmetLabels()"></div>
+                    </div>
+                    <hr style="border: 0; border-top: 1px dashed #e5e7eb; width: 100%; margin: 5px 0;">
+                    <div class="form-group"><label>Tem Tên (Bên phải):</label></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-name-scale" value="75" oninput="generateHelmetLabels()"></div>
+                        <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-name-size" value="12" oninput="generateHelmetLabels()"></div>
+                    </div>
                 </div>
             </div>
             
@@ -329,12 +359,17 @@ VŨ VĂN G</textarea>
     </div>
 
     <script>
-        // ================= ĐIỀU HƯỚNG MÀN HÌNH VÀ CÀI ĐẶT TRANG IN =================
+        // ================= GIAO DIỆN CHUNG =================
         let currentApp = 'home-screen';
         
         function setPrintOrientation(isLandscape) {
             const style = document.getElementById('print-page-style');
             style.innerHTML = `@page { size: A4 ${isLandscape ? 'landscape' : 'portrait'}; margin: 0; }`;
+        }
+
+        function toggleAdvanced(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('active');
         }
 
         function switchApp(appId) {
@@ -347,17 +382,13 @@ VŨ VĂN G</textarea>
             currentApp = appId;
 
             if (appId === 'bed-app') { 
-                setPrintOrientation(false); 
-                updateBedStyles(); 
-                generateBedLabels(); 
+                setPrintOrientation(false); updateBedStyles(); generateBedLabels(); 
             }
             else if (appId === 'room-app') { 
-                setPrintOrientation(false); 
-                generateRoomLabels(); 
+                setPrintOrientation(false); generateRoomLabels(); 
             }
             else if (appId === 'helmet-app') { 
-                setPrintOrientation(true); // Tự động cài máy in thành khổ Ngang cho Tem Mũ
-                generateHelmetLabels(); 
+                setPrintOrientation(true); generateHelmetLabels(); 
             }
 
             adjustScaleForMobile();
@@ -366,16 +397,13 @@ VŨ VĂN G</textarea>
         function adjustScaleForMobile() {
             if(currentApp === 'home-screen') return;
             const isHelmet = currentApp === 'helmet-app';
-            
             const wrapperId = `preview-wrapper-${currentApp.replace('-app', '')}`;
             const printAreaId = `print-area-${currentApp.replace('-app', '')}`;
-            
             const wrapper = document.getElementById(wrapperId);
             const printArea = document.getElementById(printAreaId);
             if(!wrapper || !printArea) return;
 
             const wrapperWidth = wrapper.clientWidth;
-            // Base width: A4 Portrait ~794px, A4 Landscape ~1122px
             const baseWidth = isHelmet ? 1122 : 794; 
 
             if (wrapperWidth < (baseWidth + 40)) {
@@ -388,6 +416,55 @@ VŨ VĂN G</textarea>
             }
         }
         window.addEventListener('resize', adjustScaleForMobile);
+
+        // ================= THUẬT TOÁN TỰ ĐỘNG VIẾT TẮT =================
+        function abbreviateWord(word) {
+            if (!word || word.length <= 1) return word;
+            const upperWord = word.toUpperCase();
+            const match = upperWord.match(/^(QU|GI|NGH|NG|GH|KH|NH|PH|TH|CH|TR|[BCDĐGHKLMNPQRSTVX])/i);
+            if (match) {
+                return match[0] + '.';
+            }
+            return upperWord.charAt(0) + '.';
+        }
+
+        function getAbbreviatedName(fullName, level) {
+            let words = fullName.trim().split(/\s+/);
+            if (words.length <= 1) return fullName;
+            
+            const lastIdx = words.length - 1;
+            const priorities = [];
+            if (words.length > 1) priorities.push(1);
+            if (words.length > 2) priorities.push(0);
+            if (words.length > 3) priorities.push(2);
+            for (let i = 3; i < lastIdx; i++) priorities.push(i); 
+
+            for (let i = 0; i < level && i < priorities.length; i++) {
+                let p = priorities[i];
+                words[p] = abbreviateWord(words[p]);
+            }
+            return words.join(' ');
+        }
+
+        function autoAbbreviateAll(containerId, selector, getScaleFn, getMaxWidthFn) {
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            const elements = container.querySelectorAll(selector);
+            
+            elements.forEach(el => {
+                const originalName = el.innerText;
+                let level = 0;
+                let maxLevels = originalName.trim().split(/\s+/).length - 1;
+                
+                const scale = getScaleFn ? getScaleFn(el) : 1;
+                const maxWidth = getMaxWidthFn ? getMaxWidthFn(el) : el.clientWidth;
+                
+                while ((el.scrollWidth * scale) > maxWidth + 2 && level < maxLevels) {
+                    level++;
+                    el.innerText = getAbbreviatedName(originalName, level);
+                }
+            });
+        }
 
         // ================= LOGIC TEM GIƯỜNG =================
         function updateBedStyles() {
@@ -461,13 +538,21 @@ VŨ VĂN G</textarea>
                 });
                 printArea.appendChild(pageEl);
             }
-            setTimeout(adjustScaleForMobile, 50);
+            
+            setTimeout(() => {
+                autoAbbreviateAll('print-area-bed', '.txt-scale1', 
+                    () => document.getElementById('bed-s1').value / 100, 
+                    (el) => el.closest('.text-wrapper').clientWidth - 15
+                );
+                adjustScaleForMobile();
+            }, 50);
         }
 
         // ================= LOGIC TEM PHÒNG =================
         let roomCount = 0;
 
         function addRoomBlock() {
+            const capacity = parseInt(document.getElementById('room-capacity').value) || 5;
             roomCount++;
             const container = document.getElementById('room-blocks-container');
             const block = document.createElement('div');
@@ -475,7 +560,7 @@ VŨ VĂN G</textarea>
             block.id = `room-block-${roomCount}`;
             
             let inputsHtml = '';
-            for(let i=1; i<=5; i++) {
+            for(let i = 1; i <= capacity; i++) {
                 inputsHtml += `
                     <div class="room-inputs">
                         <span>${i}</span>
@@ -496,10 +581,10 @@ VŨ VĂN G</textarea>
             if(roomCount === 1) {
                 const names = block.querySelectorAll('.r-inp-name');
                 const units = block.querySelectorAll('.r-inp-unit');
-                names[0].value = "NGUYỄN ĐỨC ĐƯỜNG"; units[0].value = "OT01";
-                names[1].value = "CAO VĂN HƯNG"; units[1].value = "OT01";
-                names[2].value = "TRƯƠNG THÀNH NGHĨA"; units[2].value = "OT01";
-                names[3].value = "BÙI THANH BÌNH"; units[3].value = "OT01";
+                if(names[0]) { names[0].value = "NGUYỄN ĐỨC ĐƯỜNG"; units[0].value = "OT01"; }
+                if(names[1]) { names[1].value = "CAO VĂN HƯNG"; units[1].value = "OT01"; }
+                if(names[2]) { names[2].value = "TRƯƠNG THÀNH NGHĨA"; units[2].value = "OT01"; }
+                if(names[3]) { names[3].value = "BÙI THANH BÌNH"; units[3].value = "OT01"; }
             }
             generateRoomLabels();
         }
@@ -509,10 +594,48 @@ VŨ VĂN G</textarea>
             generateRoomLabels();
         }
 
+        function rebuildRoomBlocks() {
+            const capacity = parseInt(document.getElementById('room-capacity').value) || 5;
+            let allStudents = [];
+            const blocks = document.querySelectorAll('.room-block');
+            
+            blocks.forEach(block => {
+                const names = block.querySelectorAll('.r-inp-name');
+                const units = block.querySelectorAll('.r-inp-unit');
+                for(let i = 0; i < names.length; i++) {
+                    if(names[i].value.trim() !== '' || units[i].value.trim() !== '') {
+                        allStudents.push({n: names[i].value.trim(), u: units[i].value.trim()});
+                    }
+                }
+            });
+
+            document.getElementById('room-blocks-container').innerHTML = '';
+            roomCount = 0;
+
+            if (allStudents.length === 0) {
+                addRoomBlock();
+            } else {
+                for (let i = 0; i < allStudents.length; i += capacity) {
+                    addRoomBlock();
+                    const currentBlock = document.getElementById(`room-block-${roomCount}`);
+                    const names = currentBlock.querySelectorAll('.r-inp-name');
+                    const units = currentBlock.querySelectorAll('.r-inp-unit');
+                    const chunk = allStudents.slice(i, i + capacity);
+                    
+                    chunk.forEach((st, idx) => {
+                        names[idx].value = st.n;
+                        units[idx].value = st.u;
+                    });
+                }
+            }
+            generateRoomLabels();
+        }
+
         document.getElementById('room-blocks-container').addEventListener('paste', function(e) {
             if (!e.target.classList.contains('r-inp-name') && !e.target.classList.contains('r-inp-unit')) return;
             e.preventDefault();
             
+            const capacity = parseInt(document.getElementById('room-capacity').value) || 5;
             const text = (e.clipboardData || window.clipboardData).getData('text');
             const rows = text.split(/\r\n|\n|\r/);
             
@@ -541,7 +664,7 @@ VŨ VĂN G</textarea>
                     }
 
                     currentRow++;
-                    if (currentRow >= 5) {
+                    if (currentRow >= capacity) {
                         currentRow = 0;
                         currentBlkIdx++;
                     }
@@ -553,6 +676,7 @@ VŨ VĂN G</textarea>
         function generateRoomLabels() {
             const globalTitle = document.getElementById('room-global-title').value || 'PHÒNG Ở HỌC VIÊN - c460';
             const printArea = document.getElementById('print-area-room');
+            const capacity = parseInt(document.getElementById('room-capacity').value) || 5;
             printArea.innerHTML = '';
 
             const blocks = document.querySelectorAll('.room-block');
@@ -566,7 +690,8 @@ VŨ VĂN G</textarea>
                 let students = [];
                 let tpAssigned = false;
 
-                for(let i=0; i<5; i++) {
+                for(let i=0; i < capacity; i++) {
+                    if(!names[i]) continue;
                     let n = names[i].value.trim();
                     let u = units[i].value.trim();
                     if(n !== '') {
@@ -609,7 +734,14 @@ VŨ VĂN G</textarea>
                 });
                 printArea.appendChild(pageEl);
             }
-            setTimeout(adjustScaleForMobile, 50);
+            
+            setTimeout(() => {
+                autoAbbreviateAll('print-area-room', '.r-name', 
+                    () => 1, 
+                    (el) => el.clientWidth 
+                );
+                adjustScaleForMobile();
+            }, 50);
         }
 
         // ================= LOGIC TEM MŨ BẢO HIỂM =================
@@ -674,7 +806,7 @@ VŨ VĂN G</textarea>
                     nameEllipse.className = 'tag-ellipse';
                     
                     const nameText = document.createElement('div');
-                    nameText.className = 'text-common';
+                    nameText.className = 'text-common helmet-name'; 
                     nameText.innerText = name;
                     nameText.style.transform = `scaleX(${nameScale})`;
                     nameText.style.fontSize = `${nameSize}mm`;
@@ -690,7 +822,14 @@ VŨ VĂN G</textarea>
 
                 printArea.appendChild(pageDiv);
             }
-            setTimeout(adjustScaleForMobile, 50);
+
+            setTimeout(() => {
+                autoAbbreviateAll('print-area-helmet', '.helmet-name', 
+                    () => document.getElementById('helmet-name-scale').value / 100, 
+                    (el) => el.closest('.tag-ellipse').clientWidth - 60
+                );
+                adjustScaleForMobile();
+            }, 50);
         }
 
         // Khởi tạo phòng mặc định
