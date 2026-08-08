@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Phần Mềm Tạo Tem Giường</title>
+    <title>Hệ Thống Tạo Tem Quân Sự</title>
     <style>
+        /* ================= KHOAI BÁO PHÔNG CHỮ ================= */
         @font-face {
             font-family: 'UTM HelvetIns';
             src: url('UTM HelvetIns.ttf') format('truetype');
@@ -12,236 +13,373 @@
             font-style: normal;
         }
 
-        /* THÔNG SỐ MẶC ĐỊNH MỚI THEO ẢNH */
+        /* ================= BIẾN CSS & CÀI ĐẶT CHUNG ================= */
         :root {
-            --h1: 0.9cm;       
-            --s1: 0.6;         /* 60% */
-            --h2: 0.5cm;       /* 5mm */
-            --s2: 0.7;         
-            --pt: 0.3cm;       
-            --sp: 0.2cm;       
-            --bm: 0.4cm;       
-            --bt: 1.2mm;       
-            --theme-color: #0f62fe;
-            --bg-color: #f4f4f4;
+            --h1: 0.9cm; --s1: 0.6; --h2: 0.5cm; --s2: 0.7; 
+            --pt: 0.3cm; --sp: 0.2cm; --bm: 0.4cm; --bt: 1.2mm;
+            --theme-color: #0f62fe; --bg-color: #f4f4f4; --dark-bg: #525659;
         }
 
         * { box-sizing: border-box; }
         body {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            height: 100vh;
-            height: 100dvh; 
             background: var(--bg-color);
+            height: 100vh; height: 100dvh;
             overflow: hidden;
         }
 
-        .sidebar {
-            width: 420px;
-            min-width: 420px;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 12px rgba(0,0,0,0.08);
-            z-index: 10;
+        /* ================= MÀN HÌNH HOME ================= */
+        #home-screen {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100%; background: #fff; gap: 30px;
         }
-        
-        .sidebar-header { padding: 15px 20px; background: var(--theme-color); color: white; }
+        #home-screen h1 { font-family: 'UTM HelvetIns', sans-serif; font-size: 3rem; color: #333; margin: 0; text-transform: uppercase; text-align: center; padding: 0 10px; }
+        .menu-options { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 800px;}
+        .btn-menu {
+            padding: 20px 30px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            border: none; border-radius: 8px; background: var(--theme-color); color: white;
+            box-shadow: 0 4px 15px rgba(15,98,254,0.3); transition: transform 0.2s;
+            font-family: 'UTM HelvetIns', sans-serif; letter-spacing: 1px; min-width: 200px;
+        }
+        .btn-menu:hover { transform: translateY(-5px); }
+        .btn-menu.room-btn { background: #d93025; box-shadow: 0 4px 15px rgba(217,48,37,0.3); }
+        .btn-menu.helmet-btn { background: #15803d; box-shadow: 0 4px 15px rgba(21,128,61,0.3); }
+
+        /* ================= BỐ CỤC APP ================= */
+        .app-container { display: none; height: 100%; flex-direction: row; }
+        .sidebar { width: 420px; min-width: 420px; background: white; display: flex; flex-direction: column; box-shadow: 2px 0 12px rgba(0,0,0,0.08); z-index: 10; }
+        .sidebar-header { padding: 15px 20px; background: var(--theme-color); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header.room-theme { background: #d93025; }
+        .sidebar-header.helmet-theme { background: #15803d; }
         .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
-
+        .btn-back { background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-back:hover { background: rgba(255,255,255,0.3); }
+        
         .sidebar-content { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 15px; }
-
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         .form-row { display: flex; gap: 12px; }
         .form-row .form-group { flex: 1; }
         
         label { font-weight: 600; font-size: 0.75rem; color: #444; text-transform: uppercase; }
-        input {
-            padding: 8px 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 0.95rem;
-        }
-        input:focus { border-color: var(--theme-color); outline: none; }
+        input, textarea { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-family: inherit; font-size: 0.95rem; }
+        input:focus, textarea:focus { outline: none; border-color: #888; }
+        textarea { resize: vertical; min-height: 150px; font-family: monospace; }
         
-        /* CSS BẢNG DỮ LIỆU */
-        .table-wrapper {
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f9fafb; font-size: 0.75rem; padding: 8px; text-align: left; border-bottom: 1px solid #d1d5db; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
-        td { border-bottom: 1px solid #eee; }
-        td input { width: 100%; border: none; border-radius: 0; padding: 8px; box-sizing: border-box; }
-        td input:focus { outline: 1px solid var(--theme-color); z-index: 2; position: relative; }
-        .btn-del-row { background: #ff4d4f; color: white; border: none; padding: 8px; cursor: pointer; width: 100%; height: 100%; font-weight: bold; }
-        
-        .table-actions { display: flex; gap: 10px; margin-top: 5px; }
-        .btn-sm { padding: 6px 12px; font-size: 0.8rem; cursor: pointer; border: 1px solid #ccc; background: #fff; border-radius: 4px; }
-        .btn-sm:hover { background: #f0f0f0; }
-
         .btn-group { display: flex; gap: 10px; padding: 15px 20px; background: white; border-top: 1px solid #eee; }
         button.action-btn { flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; color: white; }
         .btn-generate { background: #475259; }
         .btn-print { background: var(--theme-color); }
+        .btn-print.room-print { background: #d93025; }
+        .btn-print.helmet-print { background: #15803d; }
 
-        .preview-wrapper { flex: 1; overflow: auto; background: #525659; padding: 30px; display: flex; justify-content: center; align-items: flex-start; }
-        #print-area { display: flex; flex-direction: column; gap: 20px; transform-origin: top center; }
+        .preview-wrapper { flex: 1; overflow: auto; background: var(--dark-bg); padding: 30px; display: flex; justify-content: center; align-items: flex-start; }
+        .print-area { display: flex; flex-direction: column; gap: 20px; transform-origin: top center; }
 
-        .page {
-            width: 21cm; height: 29.7cm; background: white;
-            padding-top: 2.15cm; padding-left: 1.3cm;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            display: grid; grid-template-columns: repeat(3, 6cm); grid-template-rows: repeat(8, 3cm); gap: 2mm; 
+        /* ================= CSS TEM GIƯỜNG ================= */
+        .table-wrapper { border: 1px solid #d1d5db; border-radius: 4px; max-height: 200px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f9fafb; font-size: 0.75rem; padding: 8px; text-align: left; border-bottom: 1px solid #d1d5db; position: sticky; top: 0; z-index: 1;}
+        td { border-bottom: 1px solid #eee; }
+        td input { width: 100%; border: none; border-radius: 0; padding: 8px; box-sizing: border-box; }
+        .btn-del-row { background: #ff4d4f; color: white; border: none; padding: 8px; cursor: pointer; width: 100%; height: 100%; font-weight: bold; }
+        .table-actions { display: flex; gap: 10px; margin-top: 5px; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; cursor: pointer; border: 1px solid #ccc; background: #fff; border-radius: 4px; }
+
+        .page-bed {
+            width: 21cm; height: 29.7cm; background: white; padding-top: 2.15cm; padding-left: 1.3cm;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: grid; grid-template-columns: repeat(3, 6cm); grid-template-rows: repeat(8, 3cm); gap: 2mm; 
         }
-
-        .label {
-            width: 6cm; height: 3cm; border: 1pt solid #ccc; box-sizing: border-box; position: relative; background: white; overflow: hidden; font-family: 'UTM HelvetIns', Arial, sans-serif; text-transform: uppercase; color: black;
-        }
-
-        .inner-border { position: absolute; top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); border: var(--bt) solid black; pointer-events: none; }
-        .text-wrapper { position: absolute; top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); display: flex; flex-direction: column; align-items: center; }
-        .line1 { font-size: var(--h1); line-height: var(--h1); margin-top: var(--pt); text-align: center; white-space: nowrap; }
-        .line2 { font-size: var(--h2); line-height: var(--h2); margin-top: var(--sp); text-align: center; white-space: nowrap; }
+        .label-bed { width: 6cm; height: 3cm; border: 1pt solid #ccc; box-sizing: border-box; position: relative; background: white; overflow: hidden; font-family: 'UTM HelvetIns', sans-serif; text-transform: uppercase; color: black; }
+        .label-bed .inner-border { position: absolute; top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); border: var(--bt) solid black; pointer-events: none; }
+        .label-bed .text-wrapper { position: absolute; top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); display: flex; flex-direction: column; align-items: center; }
+        .label-bed .line1 { font-size: var(--h1); line-height: var(--h1); margin-top: var(--pt); text-align: center; white-space: nowrap; }
+        .label-bed .line2 { font-size: var(--h2); line-height: var(--h2); margin-top: var(--sp); text-align: center; white-space: nowrap; }
         .txt-scale1 { display: inline-block; transform: scaleX(var(--s1)); transform-origin: center top; }
         .txt-scale2 { display: inline-block; transform: scaleX(var(--s2)); transform-origin: center top; }
 
+        /* ================= CSS TEM PHÒNG ================= */
+        .room-block { background: #f9fafb; border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin-bottom: 15px; }
+        .room-block-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; }
+        .btn-del-room { background: #ff4d4f; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.75rem; }
+        .room-inputs { display: grid; grid-template-columns: 20px 1fr 1fr; gap: 5px; align-items: center; margin-bottom: 5px; }
+        .room-inputs span { font-weight: bold; font-size: 0.8rem; text-align: center; }
+
+        .page-room {
+            width: 21cm; height: 29.7cm; background: white; padding: 2cm 0; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; align-items: center; gap: 3cm; 
+        }
+        .label-room { width: 15cm; height: 10cm; border: 1pt solid #ccc; box-sizing: border-box; position: relative; background: white; font-family: 'UTM HelvetIns', sans-serif; color: black; padding: 20px; }
+        .label-room .inner-border { width: 100%; height: 100%; border: 4pt solid black; box-sizing: border-box; display: flex; flex-direction: column; padding: 15px 20px; }
+        .room-title-print { font-size: 28pt; font-weight: normal; margin: 0; padding-bottom: 12px; margin-bottom: 25px; text-align: center; line-height: 1.1; position: relative; }
+        .room-title-print::after { content: ""; position: absolute; bottom: 0; left: 25%; width: 50%; height: 2pt; background-color: black; }
+        
+        .room-list-print { width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 5px; }
+        .room-row-print {
+            display: grid; grid-template-columns: 40px 1fr 120px; font-size: 20pt; 
+            text-transform: uppercase; align-items: center; 
+            line-height: 0.75; /* CHỈNH SỬA THEO YÊU CẦU MỚI */
+            white-space: nowrap; 
+        }
+        .room-row-print > span { padding-top: 12px; padding-bottom: 8px; }
+        .room-row-print .r-name { padding-left: 0; overflow: hidden; text-overflow: ellipsis; }
+        .room-row-print .r-unit { text-align: left; }
+
+        /* ================= CSS TEM MŨ BẢO HIỂM ================= */
+        .page-helmet {
+            width: 297mm; height: 210mm; /* A4 Ngang */
+            background: #fff; padding: 15mm 0; box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4); margin-bottom: 10mm;
+        }
+        .tag-pair { display: flex; gap: 10mm; margin-bottom: 8mm; page-break-inside: avoid; }
+        .tag-ellipse {
+            width: 100mm; height: 50mm; min-width: 100mm; max-width: 100mm; min-height: 50mm; max-height: 50mm;
+            background-color: #27318b; border-radius: 50% / 50%; position: relative;
+            display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+            overflow: hidden; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+            border: 1pt solid #ccc; /* Viền in nhạt để dễ cắt */
+        }
+        .tag-ellipse::before {
+            content: ''; position: absolute; top: 3mm; bottom: 3mm; left: 3mm; right: 3mm;
+            border: 0.5mm solid #ffffff; border-radius: 50% / 50%; pointer-events: none;
+        }
+        .text-common {
+            color: #ffffff !important; font-family: 'UTM HelvetIns', Arial, sans-serif;
+            text-transform: uppercase; text-align: center; white-space: nowrap;
+            transform-origin: center; z-index: 1;
+        }
+        .org-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; z-index: 1; }
+
+        /* ================= RESPONSIVE VÀ PRINT ================= */
         @media (max-width: 900px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; min-width: 100%; height: 50dvh; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 20; }
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; min-width: 100%; height: 50dvh; z-index: 20; }
             .btn-group { position: fixed; bottom: 0; left: 0; width: 100%; padding: 12px 15px; box-shadow: 0 -4px 15px rgba(0,0,0,0.15); z-index: 100; margin: 0; }
             .preview-wrapper { height: 50dvh; padding: 15px 0 80px 0; }
         }
 
         @media print {
             body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
+            .print-area, .print-area * { visibility: visible; }
             body { background: white; }
-            .preview-wrapper { padding: 0; display: block; overflow: visible; background: white; }
-            #print-area { position: absolute; left: 0; top: 0; width: 21cm; gap: 0; margin: 0; padding: 0; transform: none !important; }
-            .page { box-shadow: none; page-break-after: always; margin: 0; }
-            .label { border: 1pt solid black; }
-            @page { size: A4 portrait; margin: 0; }
+            .app-container, .preview-wrapper { display: block; padding: 0; overflow: visible; height: auto; background: white;}
+            .print-area { position: absolute; left: 0; top: 0; width: 100%; gap: 0; margin: 0; padding: 0; transform: none !important; }
+            .page-bed, .page-room, .page-helmet { box-shadow: none; page-break-after: always; margin: 0; border: none; }
+            .label-bed, .label-room, .tag-ellipse { border: 1pt solid black; } 
         }
+    </style>
+    <!-- Trình quản lý in (Ngang/Dọc) tự động cập nhật qua JS -->
+    <style id="print-page-style">
+        @page { size: A4 portrait; margin: 0; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>Cấu hình Tem Giường</h2>
-        </div>
-        <div class="sidebar-content">
-            
-            <!-- BẢNG NHẬP DỮ LIỆU MỚI -->
-            <div class="form-group">
-                <label>Danh sách học sinh (Có thể Paste từ Excel)</label>
-                <div class="table-wrapper">
-                    <table id="data-table">
-                        <thead>
-                            <tr>
-                                <th>Tên học sinh</th>
-                                <th>Lớp / Đơn vị</th>
-                                <th style="width: 40px; text-align: center;">Xóa</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body">
-                            <!-- Dòng mặc định -->
-                            <tr>
-                                <td><input type="text" class="inp-name" value="NGUYỄN VĂN A" oninput="generateLabels()"></td>
-                                <td><input type="text" class="inp-unit" value="CĐ1 - C152" oninput="generateLabels()"></td>
-                                <td><button class="btn-del-row" onclick="deleteRow(this)">X</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="table-actions">
-                    <button class="btn-sm" onclick="addRow('', '')">+ Thêm dòng mới</button>
-                    <button class="btn-sm" onclick="clearTable()">Xóa toàn bộ</button>
-                </div>
-            </div>
-
-            <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Số bản sao/tên</label>
-                    <input type="number" id="copies" value="1" min="1" oninput="generateLabels()">
-                </div>
-                <div class="form-group">
-                    <label>Viền cách mép (cm)</label>
-                    <input type="number" id="bm" step="0.05" value="0.4" oninput="updateStyles()">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Cao chữ 1 (cm)</label>
-                    <input type="number" id="h1" step="0.1" value="0.9" oninput="updateStyles()">
-                </div>
-                <div class="form-group">
-                    <label>Co ngang 1 (%)</label>
-                    <input type="number" id="s1" step="5" value="60" oninput="updateStyles()">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Cao chữ 2 (cm)</label>
-                    <input type="number" id="h2" step="0.1" value="0.5" oninput="updateStyles()">
-                </div>
-                <div class="form-group">
-                    <label>Co ngang 2 (%)</label>
-                    <input type="number" id="s2" step="5" value="70" oninput="updateStyles()">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Cách lề trên (cm)</label>
-                    <input type="number" id="pt" step="0.05" value="0.3" oninput="updateStyles()">
-                </div>
-                <div class="form-group">
-                    <label>Cách 2 dòng (cm)</label>
-                    <input type="number" id="sp" step="0.05" value="0.2" oninput="updateStyles()">
-                </div>
-            </div>
-        </div>
-        
-        <div class="btn-group">
-            <button class="action-btn btn-generate" onclick="generateLabels()">Cập nhật (Preview)</button>
-            <button class="action-btn btn-print" onclick="window.print()">In PDF / A4</button>
+    <!-- MÀN HÌNH CHÍNH -->
+    <div id="home-screen">
+        <h1>HỆ THỐNG TẠO TEM QUÂN SỰ</h1>
+        <div class="menu-options">
+            <button class="btn-menu" onclick="switchApp('bed-app')">TẠO TEM GIƯỜNG</button>
+            <button class="btn-menu room-btn" onclick="switchApp('room-app')">TẠO TEM PHÒNG</button>
+            <button class="btn-menu helmet-btn" onclick="switchApp('helmet-app')">TẠO TEM MŨ BẢO HIỂM</button>
         </div>
     </div>
 
-    <div class="preview-wrapper" id="preview-wrapper">
-        <div id="print-area"></div>
+    <!-- ================= APP TEM GIƯỜNG ================= -->
+    <div id="bed-app" class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Cấu hình Tem Giường</h2>
+                <button class="btn-back" onclick="switchApp('home-screen')">Quay lại</button>
+            </div>
+            <div class="sidebar-content">
+                <div class="form-group">
+                    <label>Danh sách học sinh (Có thể Paste từ Excel)</label>
+                    <div class="table-wrapper">
+                        <table id="data-table">
+                            <thead><tr><th>Tên học sinh</th><th>Lớp / Đơn vị</th><th style="width: 40px; text-align: center;">Xóa</th></tr></thead>
+                            <tbody id="table-body">
+                                <tr>
+                                    <td><input type="text" class="inp-name" value="NGUYỄN VĂN A" oninput="generateBedLabels()"></td>
+                                    <td><input type="text" class="inp-unit" value="CĐ1 - C152" oninput="generateBedLabels()"></td>
+                                    <td><button class="btn-del-row" onclick="deleteBedRow(this)">X</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-actions">
+                        <button class="btn-sm" onclick="addBedRow('', '')">+ Thêm dòng</button>
+                        <button class="btn-sm" onclick="clearBedTable()">Xóa toàn bộ</button>
+                    </div>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
+                <div class="form-row">
+                    <div class="form-group"><label>Số bản sao/tên</label><input type="number" id="bed-copies" value="1" min="1" oninput="generateBedLabels()"></div>
+                    <div class="form-group"><label>Viền cách mép (cm)</label><input type="number" id="bed-bm" step="0.05" value="0.4" oninput="updateBedStyles()"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Cao chữ 1 (cm)</label><input type="number" id="bed-h1" step="0.1" value="0.9" oninput="updateBedStyles()"></div>
+                    <div class="form-group"><label>Co ngang 1 (%)</label><input type="number" id="bed-s1" step="5" value="60" oninput="updateBedStyles()"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Cao chữ 2 (cm)</label><input type="number" id="bed-h2" step="0.1" value="0.5" oninput="updateBedStyles()"></div>
+                    <div class="form-group"><label>Co ngang 2 (%)</label><input type="number" id="bed-s2" step="5" value="70" oninput="updateBedStyles()"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Cách lề trên (cm)</label><input type="number" id="bed-pt" step="0.05" value="0.3" oninput="updateBedStyles()"></div>
+                    <div class="form-group"><label>Cách 2 dòng (cm)</label><input type="number" id="bed-sp" step="0.05" value="0.2" oninput="updateBedStyles()"></div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="action-btn btn-generate" onclick="generateBedLabels()">Cập nhật</button>
+                <button class="action-btn btn-print" onclick="window.print()">In PDF / A4</button>
+            </div>
+        </div>
+        <div class="preview-wrapper" id="preview-wrapper-bed">
+            <div id="print-area-bed" class="print-area"></div>
+        </div>
+    </div>
+
+    <!-- ================= APP TEM PHÒNG ================= -->
+    <div id="room-app" class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-header room-theme">
+                <h2>Cấu hình Tem Phòng</h2>
+                <button class="btn-back" onclick="switchApp('home-screen')">Quay lại</button>
+            </div>
+            <div class="sidebar-content">
+                <div class="form-group">
+                    <label>Tiêu đề chung cho các phòng</label>
+                    <input type="text" id="room-global-title" value="PHÒNG Ở HỌC VIÊN - c460" oninput="generateRoomLabels()">
+                </div>
+                <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
+                <div id="room-blocks-container"></div>
+                <button class="btn-sm" style="width:100%; padding: 10px; font-weight:bold;" onclick="addRoomBlock()">+ THÊM PHÒNG MỚI</button>
+            </div>
+            <div class="btn-group">
+                <button class="action-btn btn-generate" onclick="generateRoomLabels()">Cập nhật</button>
+                <button class="action-btn btn-print room-print" onclick="window.print()">In PDF / A4</button>
+            </div>
+        </div>
+        <div class="preview-wrapper" id="preview-wrapper-room">
+            <div id="print-area-room" class="print-area"></div>
+        </div>
+    </div>
+
+    <!-- ================= APP TEM MŨ BẢO HIỂM ================= -->
+    <div id="helmet-app" class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-header helmet-theme">
+                <h2>Cấu hình Tem Mũ Bảo Hiểm</h2>
+                <button class="btn-back" onclick="switchApp('home-screen')">Quay lại</button>
+            </div>
+            <div class="sidebar-content">
+                <div class="form-group">
+                    <label>Nhập Tên / Chức vụ (Mỗi người 1 dòng):</label>
+                    <textarea id="helmet-names" oninput="generateHelmetLabels()">NGUYỄN VĂN A
+TRẦN THỊ B
+PHẠM VĂN C
+LÊ THỊ D
+HOÀNG VĂN E
+ĐINH THỊ F
+VŨ VĂN G</textarea>
+                </div>
+                
+                <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
+                
+                <div class="form-group">
+                    <label>Tem Cơ quan - Dòng trên:</label>
+                    <input type="text" id="helmet-top-text" value="HỌC VIỆN KỸ THUẬT QUÂN SỰ" oninput="generateHelmetLabels()">
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-top-scale" value="75" oninput="generateHelmetLabels()"></div>
+                    <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-top-size" value="8" oninput="generateHelmetLabels()"></div>
+                    <div class="form-group"><label>Cách dưới (mm)</label><input type="number" id="helmet-top-gap" value="4" step="0.5" oninput="generateHelmetLabels()"></div>
+                </div>
+
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>Tem Cơ quan - Dòng dưới:</label>
+                    <input type="text" id="helmet-bot-text" value="TIỂU ĐOÀN 4" oninput="generateHelmetLabels()">
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-bot-scale" value="75" oninput="generateHelmetLabels()"></div>
+                    <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-bot-size" value="10" oninput="generateHelmetLabels()"></div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
+                
+                <div class="form-group">
+                    <label>Tem Tên (Bên phải):</label>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Co ngang (%)</label><input type="number" id="helmet-name-scale" value="75" oninput="generateHelmetLabels()"></div>
+                    <div class="form-group"><label>Cao chữ (mm)</label><input type="number" id="helmet-name-size" value="12" oninput="generateHelmetLabels()"></div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="action-btn btn-generate" onclick="generateHelmetLabels()">Cập nhật</button>
+                <button class="action-btn btn-print helmet-print" onclick="window.print()">In PDF (Khổ Ngang)</button>
+            </div>
+        </div>
+        <div class="preview-wrapper" id="preview-wrapper-helmet">
+            <div id="print-area-helmet" class="print-area"></div>
+        </div>
     </div>
 
     <script>
-        // Cập nhật biến CSS
-        function updateStyles() {
-            const root = document.documentElement;
-            root.style.setProperty('--h1', document.getElementById('h1').value + 'cm');
-            root.style.setProperty('--s1', document.getElementById('s1').value / 100);
-            root.style.setProperty('--h2', document.getElementById('h2').value + 'cm');
-            root.style.setProperty('--s2', document.getElementById('s2').value / 100);
-            root.style.setProperty('--pt', document.getElementById('pt').value + 'cm');
-            root.style.setProperty('--sp', document.getElementById('sp').value + 'cm');
-            root.style.setProperty('--bm', document.getElementById('bm').value + 'cm');
+        // ================= ĐIỀU HƯỚNG MÀN HÌNH VÀ CÀI ĐẶT TRANG IN =================
+        let currentApp = 'home-screen';
+        
+        function setPrintOrientation(isLandscape) {
+            const style = document.getElementById('print-page-style');
+            style.innerHTML = `@page { size: A4 ${isLandscape ? 'landscape' : 'portrait'}; margin: 0; }`;
         }
 
-        // Tự động scale trên mobile
+        function switchApp(appId) {
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('bed-app').style.display = 'none';
+            document.getElementById('room-app').style.display = 'none';
+            document.getElementById('helmet-app').style.display = 'none';
+            
+            document.getElementById(appId).style.display = 'flex';
+            currentApp = appId;
+
+            if (appId === 'bed-app') { 
+                setPrintOrientation(false); 
+                updateBedStyles(); 
+                generateBedLabels(); 
+            }
+            else if (appId === 'room-app') { 
+                setPrintOrientation(false); 
+                generateRoomLabels(); 
+            }
+            else if (appId === 'helmet-app') { 
+                setPrintOrientation(true); // Tự động cài máy in thành khổ Ngang cho Tem Mũ
+                generateHelmetLabels(); 
+            }
+
+            adjustScaleForMobile();
+        }
+
         function adjustScaleForMobile() {
-            const wrapper = document.getElementById('preview-wrapper');
-            const printArea = document.getElementById('print-area');
+            if(currentApp === 'home-screen') return;
+            const isHelmet = currentApp === 'helmet-app';
+            
+            const wrapperId = `preview-wrapper-${currentApp.replace('-app', '')}`;
+            const printAreaId = `print-area-${currentApp.replace('-app', '')}`;
+            
+            const wrapper = document.getElementById(wrapperId);
+            const printArea = document.getElementById(printAreaId);
+            if(!wrapper || !printArea) return;
+
             const wrapperWidth = wrapper.clientWidth;
-            if (wrapperWidth < 820) {
-                const scale = (wrapperWidth - 40) / 794; 
+            // Base width: A4 Portrait ~794px, A4 Landscape ~1122px
+            const baseWidth = isHelmet ? 1122 : 794; 
+
+            if (wrapperWidth < (baseWidth + 40)) {
+                const scale = (wrapperWidth - 40) / baseWidth; 
                 printArea.style.transform = `scale(${scale})`;
                 printArea.style.marginBottom = `-${(1 - scale) * 100}%`; 
             } else {
@@ -249,100 +387,315 @@
                 printArea.style.marginBottom = '0';
             }
         }
+        window.addEventListener('resize', adjustScaleForMobile);
 
-        // --- CÁC HÀM XỬ LÝ BẢNG DỮ LIỆU ---
-        const tbody = document.getElementById('table-body');
+        // ================= LOGIC TEM GIƯỜNG =================
+        function updateBedStyles() {
+            const root = document.documentElement;
+            root.style.setProperty('--h1', document.getElementById('bed-h1').value + 'cm');
+            root.style.setProperty('--s1', document.getElementById('bed-s1').value / 100);
+            root.style.setProperty('--h2', document.getElementById('bed-h2').value + 'cm');
+            root.style.setProperty('--s2', document.getElementById('bed-s2').value / 100);
+            root.style.setProperty('--pt', document.getElementById('bed-pt').value + 'cm');
+            root.style.setProperty('--sp', document.getElementById('bed-sp').value + 'cm');
+            root.style.setProperty('--bm', document.getElementById('bed-bm').value + 'cm');
+        }
 
-        function addRow(nameVal = '', unitVal = '') {
+        const bedTbody = document.getElementById('table-body');
+        function addBedRow(nameVal = '', unitVal = '') {
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="text" class="inp-name" value="${nameVal}" oninput="generateLabels()"></td>
-                <td><input type="text" class="inp-unit" value="${unitVal}" oninput="generateLabels()"></td>
-                <td><button class="btn-del-row" onclick="deleteRow(this)">X</button></td>
-            `;
-            tbody.appendChild(tr);
-            generateLabels();
+            tr.innerHTML = `<td><input type="text" class="inp-name" value="${nameVal}" oninput="generateBedLabels()"></td>
+                            <td><input type="text" class="inp-unit" value="${unitVal}" oninput="generateBedLabels()"></td>
+                            <td><button class="btn-del-row" onclick="deleteBedRow(this)">X</button></td>`;
+            bedTbody.appendChild(tr);
+            generateBedLabels();
         }
-
-        function deleteRow(btn) {
-            btn.closest('tr').remove();
-            generateLabels();
-        }
-
-        function clearTable() {
-            tbody.innerHTML = '';
-            addRow(); // Giữ lại 1 dòng trắng
-        }
-
-        // Bắt sự kiện Paste để xử lý dán từ Excel
-        tbody.addEventListener('paste', function(e) {
+        function deleteBedRow(btn) { btn.closest('tr').remove(); generateBedLabels(); }
+        function clearBedTable() { bedTbody.innerHTML = ''; addBedRow(); }
+        
+        bedTbody.addEventListener('paste', function(e) {
             e.preventDefault();
             const text = (e.clipboardData || window.clipboardData).getData('text');
             const rows = text.split(/\r\n|\n|\r/);
-            
-            // Xóa dòng trắng đang focus nếu có
             const currentTr = e.target.closest('tr');
-            const nameInp = currentTr.querySelector('.inp-name').value;
-            const unitInp = currentTr.querySelector('.inp-unit').value;
-            if (nameInp.trim() === '' && unitInp.trim() === '') {
+            if (currentTr && currentTr.querySelector('.inp-name').value.trim() === '' && currentTr.querySelector('.inp-unit').value.trim() === '') {
                 currentTr.remove();
             }
-
             rows.forEach(row => {
-                const cols = row.split(/\t/); // Phân tách cột bằng tab (chuẩn Excel)
+                const cols = row.split(/\t/);
                 if (cols.length > 0 && cols[0].trim() !== '') {
-                    const name = cols[0].trim();
-                    const unit = cols.length > 1 ? cols[1].trim() : '';
-                    addRow(name, unit);
+                    addBedRow(cols[0].trim(), cols.length > 1 ? cols[1].trim() : '');
                 }
             });
         });
 
-        // Tạo giao diện tem
-        function generateLabels() {
-            const copies = parseInt(document.getElementById('copies').value) || 1;
-            const rows = tbody.querySelectorAll('tr');
+        function generateBedLabels() {
+            const copies = parseInt(document.getElementById('bed-copies').value) || 1;
+            const rows = bedTbody.querySelectorAll('tr');
             const allLabels = [];
-
             rows.forEach(row => {
                 const name = row.querySelector('.inp-name').value.trim();
                 const unit = row.querySelector('.inp-unit').value.trim();
                 if (name !== '' || unit !== '') {
-                    for (let i = 0; i < copies; i++) {
-                        allLabels.push({ name, unit });
-                    }
+                    for (let i = 0; i < copies; i++) allLabels.push({ name, unit });
                 }
             });
 
-            const printArea = document.getElementById('print-area');
+            const printArea = document.getElementById('print-area-bed');
             printArea.innerHTML = '';
-
             if (allLabels.length === 0) return;
 
             for (let i = 0; i < allLabels.length; i += 24) {
                 const pageData = allLabels.slice(i, i + 24);
                 const pageEl = document.createElement('div');
-                pageEl.className = 'page';
-
+                pageEl.className = 'page-bed';
                 pageData.forEach(data => {
                     pageEl.innerHTML += `
-                        <div class="label">
+                        <div class="label-bed">
                             <div class="inner-border"></div>
                             <div class="text-wrapper">
                                 <div class="line1"><span class="txt-scale1">${data.name}</span></div>
                                 <div class="line2"><span class="txt-scale2">${data.unit}</span></div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 printArea.appendChild(pageEl);
             }
             setTimeout(adjustScaleForMobile, 50);
         }
 
-        window.addEventListener('resize', adjustScaleForMobile);
-        updateStyles();
-        generateLabels();
+        // ================= LOGIC TEM PHÒNG =================
+        let roomCount = 0;
+
+        function addRoomBlock() {
+            roomCount++;
+            const container = document.getElementById('room-blocks-container');
+            const block = document.createElement('div');
+            block.className = 'room-block';
+            block.id = `room-block-${roomCount}`;
+            
+            let inputsHtml = '';
+            for(let i=1; i<=5; i++) {
+                inputsHtml += `
+                    <div class="room-inputs">
+                        <span>${i}</span>
+                        <input type="text" placeholder="Tên HS ${i}" class="r-inp-name" oninput="generateRoomLabels()">
+                        <input type="text" placeholder="Lớp" class="r-inp-unit" oninput="generateRoomLabels()">
+                    </div>`;
+            }
+
+            block.innerHTML = `
+                <div class="room-block-header">
+                    <span>Dữ liệu phòng ${roomCount}</span>
+                    <button class="btn-del-room" onclick="deleteRoomBlock('${block.id}')">Xóa</button>
+                </div>
+                ${inputsHtml}
+            `;
+            container.appendChild(block);
+            
+            if(roomCount === 1) {
+                const names = block.querySelectorAll('.r-inp-name');
+                const units = block.querySelectorAll('.r-inp-unit');
+                names[0].value = "NGUYỄN ĐỨC ĐƯỜNG"; units[0].value = "OT01";
+                names[1].value = "CAO VĂN HƯNG"; units[1].value = "OT01";
+                names[2].value = "TRƯƠNG THÀNH NGHĨA"; units[2].value = "OT01";
+                names[3].value = "BÙI THANH BÌNH"; units[3].value = "OT01";
+            }
+            generateRoomLabels();
+        }
+
+        function deleteRoomBlock(blockId) {
+            document.getElementById(blockId).remove();
+            generateRoomLabels();
+        }
+
+        document.getElementById('room-blocks-container').addEventListener('paste', function(e) {
+            if (!e.target.classList.contains('r-inp-name') && !e.target.classList.contains('r-inp-unit')) return;
+            e.preventDefault();
+            
+            const text = (e.clipboardData || window.clipboardData).getData('text');
+            const rows = text.split(/\r\n|\n|\r/);
+            
+            const currentBlock = e.target.closest('.room-block');
+            const allBlocks = Array.from(document.querySelectorAll('.room-block'));
+            let currentBlkIdx = allBlocks.indexOf(currentBlock);
+            
+            const rowDiv = e.target.closest('.room-inputs');
+            const allRowDivs = Array.from(currentBlock.querySelectorAll('.room-inputs'));
+            let currentRow = allRowDivs.indexOf(rowDiv);
+
+            rows.forEach(row => {
+                const cols = row.split(/\t/);
+                if (cols.length > 0 && cols[0].trim() !== '') {
+                    while (currentBlkIdx >= document.querySelectorAll('.room-block').length) {
+                        addRoomBlock(); 
+                    }
+                    
+                    let targetBlock = document.querySelectorAll('.room-block')[currentBlkIdx];
+                    let targetNames = targetBlock.querySelectorAll('.r-inp-name');
+                    let targetUnits = targetBlock.querySelectorAll('.r-inp-unit');
+
+                    targetNames[currentRow].value = cols[0].trim();
+                    if (cols.length > 1) {
+                        targetUnits[currentRow].value = cols[1].trim();
+                    }
+
+                    currentRow++;
+                    if (currentRow >= 5) {
+                        currentRow = 0;
+                        currentBlkIdx++;
+                    }
+                }
+            });
+            generateRoomLabels();
+        });
+
+        function generateRoomLabels() {
+            const globalTitle = document.getElementById('room-global-title').value || 'PHÒNG Ở HỌC VIÊN - c460';
+            const printArea = document.getElementById('print-area-room');
+            printArea.innerHTML = '';
+
+            const blocks = document.querySelectorAll('.room-block');
+            if (blocks.length === 0) return;
+
+            let validRooms = [];
+            
+            blocks.forEach(block => {
+                const names = block.querySelectorAll('.r-inp-name');
+                const units = block.querySelectorAll('.r-inp-unit');
+                let students = [];
+                let tpAssigned = false;
+
+                for(let i=0; i<5; i++) {
+                    let n = names[i].value.trim();
+                    let u = units[i].value.trim();
+                    if(n !== '') {
+                        if(!tpAssigned) {
+                            if(u !== '' && !u.includes('(TP)')) u += ' (TP)';
+                            if(u === '') u = '(TP)';
+                            tpAssigned = true;
+                        }
+                        students.push({name: n, unit: u});
+                    }
+                }
+                if(students.length > 0) validRooms.push(students);
+            });
+
+            for (let i = 0; i < validRooms.length; i += 2) {
+                const pageData = validRooms.slice(i, i + 2);
+                const pageEl = document.createElement('div');
+                pageEl.className = 'page-room';
+
+                pageData.forEach(roomStudents => {
+                    let listHtml = '';
+                    roomStudents.forEach((st, idx) => {
+                        listHtml += `
+                            <div class="room-row-print">
+                                <span>${idx + 1}.</span>
+                                <span class="r-name">${st.name}</span>
+                                <span class="r-unit">${st.unit}</span>
+                            </div>`;
+                    });
+
+                    pageEl.innerHTML += `
+                        <div class="label-room">
+                            <div class="inner-border">
+                                <h1 class="room-title-print">${globalTitle}</h1>
+                                <div class="room-list-print">
+                                    ${listHtml}
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                printArea.appendChild(pageEl);
+            }
+            setTimeout(adjustScaleForMobile, 50);
+        }
+
+        // ================= LOGIC TEM MŨ BẢO HIỂM =================
+        function generateHelmetLabels() {
+            const namesRaw = document.getElementById('helmet-names').value;
+            const names = namesRaw.split('\n').map(n => n.trim()).filter(n => n !== '');
+
+            const topText = document.getElementById('helmet-top-text').value;
+            const topScale = (document.getElementById('helmet-top-scale').value || 75) / 100;
+            const topSize = document.getElementById('helmet-top-size').value || 8;
+            const orgGap = document.getElementById('helmet-top-gap').value || 4;
+
+            const botText = document.getElementById('helmet-bot-text').value;
+            const botScale = (document.getElementById('helmet-bot-scale').value || 75) / 100;
+            const botSize = document.getElementById('helmet-bot-size').value || 10;
+
+            const nameScale = (document.getElementById('helmet-name-scale').value || 75) / 100;
+            const nameSize = document.getElementById('helmet-name-size').value || 12;
+
+            const printArea = document.getElementById('print-area-helmet');
+            printArea.innerHTML = ''; 
+
+            if (names.length === 0) return;
+
+            const PAIRS_PER_PAGE = 3;
+            
+            for (let i = 0; i < names.length; i += PAIRS_PER_PAGE) {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page-helmet';
+                
+                const pageNames = names.slice(i, i + PAIRS_PER_PAGE);
+
+                pageNames.forEach(name => {
+                    const pairWrapper = document.createElement('div');
+                    pairWrapper.className = 'tag-pair';
+
+                    const orgEllipse = document.createElement('div');
+                    orgEllipse.className = 'tag-ellipse';
+                    const orgTextContainer = document.createElement('div');
+                    orgTextContainer.className = 'org-container';
+                    
+                    const spanTop = document.createElement('div');
+                    spanTop.className = 'text-common';
+                    spanTop.innerText = topText;
+                    spanTop.style.transform = `scaleX(${topScale})`;
+                    spanTop.style.fontSize = `${topSize}mm`;
+                    spanTop.style.lineHeight = `${topSize}mm`;
+                    spanTop.style.marginBottom = `${orgGap}mm`; 
+                    
+                    const spanBot = document.createElement('div');
+                    spanBot.className = 'text-common';
+                    spanBot.innerText = botText;
+                    spanBot.style.transform = `scaleX(${botScale})`;
+                    spanBot.style.fontSize = `${botSize}mm`;
+                    spanBot.style.lineHeight = `${botSize}mm`;
+
+                    orgTextContainer.appendChild(spanTop);
+                    orgTextContainer.appendChild(spanBot);
+                    orgEllipse.appendChild(orgTextContainer);
+
+                    const nameEllipse = document.createElement('div');
+                    nameEllipse.className = 'tag-ellipse';
+                    
+                    const nameText = document.createElement('div');
+                    nameText.className = 'text-common';
+                    nameText.innerText = name;
+                    nameText.style.transform = `scaleX(${nameScale})`;
+                    nameText.style.fontSize = `${nameSize}mm`;
+                    nameText.style.lineHeight = `${nameSize}mm`;
+                    
+                    nameEllipse.appendChild(nameText);
+
+                    pairWrapper.appendChild(orgEllipse);
+                    pairWrapper.appendChild(nameEllipse);
+                    
+                    pageDiv.appendChild(pairWrapper);
+                });
+
+                printArea.appendChild(pageDiv);
+            }
+            setTimeout(adjustScaleForMobile, 50);
+        }
+
+        // Khởi tạo phòng mặc định
+        addRoomBlock();
+
     </script>
 </body>
 </html> 
