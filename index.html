@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Phần Mềm Tạo Tem Giường</title>
     <style>
-        /* ================= KHOAI BÁO PHÔNG CHỮ ================= */
         @font-face {
             font-family: 'UTM HelvetIns';
             src: url('UTM HelvetIns.ttf') format('truetype');
@@ -13,35 +12,34 @@
             font-style: normal;
         }
 
-        /* ================= BIẾN CSS & CÀI ĐẶT MẶC ĐỊNH ================= */
+        /* THÔNG SỐ MẶC ĐỊNH MỚI THEO ẢNH */
         :root {
-            --h1: 0.8cm;       /* Cao chữ dòng 1: 9mm */
-            --s1: 0.7;         /* Co ngang dòng 1: 70% */
-            --h2: 0.5cm;       /* Cao chữ dòng 2: 6mm */
-            --s2: 0.7;         /* Co ngang dòng 2: 70% */
-            --pt: 0.3cm;       /* Cách lề trên: 3mm */
-            --sp: 0.2cm;       /* Cách 2 dòng: 2mm */
-            --bm: 0.4cm;       /* Viền cách mép tem: 4mm */
-            --bt: 1.3mm;       /* Viền dày: 1.2mm */
+            --h1: 0.9cm;       
+            --s1: 0.6;         /* 60% */
+            --h2: 0.5cm;       /* 5mm */
+            --s2: 0.7;         
+            --pt: 0.3cm;       
+            --sp: 0.2cm;       
+            --bm: 0.4cm;       
+            --bt: 1.2mm;       
             --theme-color: #0f62fe;
             --bg-color: #f4f4f4;
         }
 
-        /* ================= BỐ CỤC CHUNG ================= */
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             height: 100vh;
+            height: 100dvh; 
             background: var(--bg-color);
             overflow: hidden;
         }
 
-        /* ================= BẢNG ĐIỀU KHIỂN (SIDEBAR) ================= */
         .sidebar {
-            width: 380px;
-            min-width: 380px;
+            width: 420px;
+            min-width: 420px;
             background: white;
             display: flex;
             flex-direction: column;
@@ -49,178 +47,84 @@
             z-index: 10;
         }
         
-        .sidebar-header {
-            padding: 15px 20px;
-            background: var(--theme-color);
-            color: white;
-        }
+        .sidebar-header { padding: 15px 20px; background: var(--theme-color); color: white; }
         .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
 
-        .sidebar-content {
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        .sidebar-content { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 15px; }
 
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         .form-row { display: flex; gap: 12px; }
         .form-row .form-group { flex: 1; }
         
-        label { font-weight: 600; font-size: 0.8rem; color: #333; text-transform: uppercase; letter-spacing: 0.5px;}
-        input, textarea {
-            padding: 10px;
+        label { font-weight: 600; font-size: 0.75rem; color: #444; text-transform: uppercase; }
+        input {
+            padding: 8px 10px;
             border: 1px solid #d1d5db;
-            border-radius: 6px;
+            border-radius: 4px;
             font-family: inherit;
             font-size: 0.95rem;
-            transition: all 0.2s;
         }
-        input:focus, textarea:focus { border-color: var(--theme-color); outline: none; box-shadow: 0 0 0 3px rgba(15,98,254,0.15); }
-        textarea { resize: vertical; min-height: 90px; }
+        input:focus { border-color: var(--theme-color); outline: none; }
         
-        /* Nút bấm */
-        .btn-group { display: flex; gap: 10px; padding: 15px 20px; background: white; border-top: 1px solid #eee; }
-        button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
-            color: white;
-            transition: opacity 0.2s, transform 0.1s;
+        /* CSS BẢNG DỮ LIỆU */
+        .table-wrapper {
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
         }
-        button:active { transform: scale(0.98); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f9fafb; font-size: 0.75rem; padding: 8px; text-align: left; border-bottom: 1px solid #d1d5db; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
+        td { border-bottom: 1px solid #eee; }
+        td input { width: 100%; border: none; border-radius: 0; padding: 8px; box-sizing: border-box; }
+        td input:focus { outline: 1px solid var(--theme-color); z-index: 2; position: relative; }
+        .btn-del-row { background: #ff4d4f; color: white; border: none; padding: 8px; cursor: pointer; width: 100%; height: 100%; font-weight: bold; }
+        
+        .table-actions { display: flex; gap: 10px; margin-top: 5px; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; cursor: pointer; border: 1px solid #ccc; background: #fff; border-radius: 4px; }
+        .btn-sm:hover { background: #f0f0f0; }
+
+        .btn-group { display: flex; gap: 10px; padding: 15px 20px; background: white; border-top: 1px solid #eee; }
+        button.action-btn { flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; color: white; }
         .btn-generate { background: #475259; }
         .btn-print { background: var(--theme-color); }
 
-        /* ================= VÙNG XEM TRƯỚC (PREVIEW) ================= */
-        .preview-wrapper {
-            flex: 1;
-            overflow: auto;
-            background: #525659;
-            padding: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
+        .preview-wrapper { flex: 1; overflow: auto; background: #525659; padding: 30px; display: flex; justify-content: center; align-items: flex-start; }
+        #print-area { display: flex; flex-direction: column; gap: 20px; transform-origin: top center; }
 
-        #print-area {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            /* Container này sẽ được JS scale lại trên điện thoại để không bị che khuất */
-            transform-origin: top center; 
-        }
-
-        /* ================= CẤU TRÚC TRANG A4 VÀ TEM ================= */
         .page {
-            width: 21cm;
-            height: 29.7cm;
-            background: white;
-            /* Căn giữa khung lưới 3x8 trên giấy A4 */
-            padding-top: 2.15cm; 
-            padding-left: 1.3cm;
+            width: 21cm; height: 29.7cm; background: white;
+            padding-top: 2.15cm; padding-left: 1.3cm;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            display: grid;
-            grid-template-columns: repeat(3, 6cm);
-            grid-template-rows: repeat(8, 3cm);
-            gap: 2mm; 
+            display: grid; grid-template-columns: repeat(3, 6cm); grid-template-rows: repeat(8, 3cm); gap: 2mm; 
         }
 
         .label {
-            width: 6cm;
-            height: 3cm;
-            border: 1pt solid #ccc; /* Viền nhạt để cắt */
-            box-sizing: border-box;
-            position: relative;
-            background: white;
-            overflow: hidden;
-            font-family: 'UTM HelvetIns', Arial, sans-serif;
-            text-transform: uppercase;
-            color: black;
+            width: 6cm; height: 3cm; border: 1pt solid #ccc; box-sizing: border-box; position: relative; background: white; overflow: hidden; font-family: 'UTM HelvetIns', Arial, sans-serif; text-transform: uppercase; color: black;
         }
 
-        .inner-border {
-            position: absolute;
-            top: var(--bm);
-            bottom: var(--bm);
-            left: var(--bm);
-            right: var(--bm);
-            border: var(--bt) solid black;
-            pointer-events: none;
-        }
-
-        .text-wrapper {
-            position: absolute;
-            top: var(--bm); 
-            bottom: var(--bm); 
-            left: var(--bm); 
-            right: var(--bm);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .line1 {
-            font-size: var(--h1);
-            line-height: var(--h1);
-            margin-top: var(--pt);
-            text-align: center;
-            white-space: nowrap;
-        }
-        
-        .line2 {
-            font-size: var(--h2);
-            line-height: var(--h2);
-            margin-top: var(--sp);
-            text-align: center;
-            white-space: nowrap;
-        }
-
+        .inner-border { position: absolute; top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); border: var(--bt) solid black; pointer-events: none; }
+        .text-wrapper { position: absolute; top: var(--bm); bottom: var(--bm); left: var(--bm); right: var(--bm); display: flex; flex-direction: column; align-items: center; }
+        .line1 { font-size: var(--h1); line-height: var(--h1); margin-top: var(--pt); text-align: center; white-space: nowrap; }
+        .line2 { font-size: var(--h2); line-height: var(--h2); margin-top: var(--sp); text-align: center; white-space: nowrap; }
         .txt-scale1 { display: inline-block; transform: scaleX(var(--s1)); transform-origin: center top; }
         .txt-scale2 { display: inline-block; transform: scaleX(var(--s2)); transform-origin: center top; }
 
-        /* ================= TỐI ƯU HIỂN THỊ ĐIỆN THOẠI (RESPONSIVE) ================= */
         @media (max-width: 900px) {
             body { flex-direction: column; }
-            .sidebar {
-                width: 100%;
-                min-width: 100%;
-                height: 50vh; /* Bảng điều khiển chiếm 50% chiều cao */
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-                z-index: 20;
-            }
-            .sidebar-content { padding: 15px; }
-            .preview-wrapper {
-                height: 50vh; /* Vùng xem trước chiếm 50% chiều cao còn lại */
-                padding: 15px 0;
-            }
-            .page {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            }
+            .sidebar { width: 100%; min-width: 100%; height: 50dvh; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 20; }
+            .btn-group { position: fixed; bottom: 0; left: 0; width: 100%; padding: 12px 15px; box-shadow: 0 -4px 15px rgba(0,0,0,0.15); z-index: 100; margin: 0; }
+            .preview-wrapper { height: 50dvh; padding: 15px 0 80px 0; }
         }
 
-        /* ================= CHẾ ĐỘ IN (PRINT) ================= */
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
             body { background: white; }
             .preview-wrapper { padding: 0; display: block; overflow: visible; background: white; }
-            #print-area { 
-                position: absolute; left: 0; top: 0; width: 21cm; gap: 0; margin: 0; padding: 0; 
-                transform: none !important; /* Xóa scale khi in */
-            }
-            .page { 
-                box-shadow: none; 
-                page-break-after: always; 
-                margin: 0; 
-            }
-            .label { border: 1pt solid black; } /* Hiện rõ viền cắt khi in */
+            #print-area { position: absolute; left: 0; top: 0; width: 21cm; gap: 0; margin: 0; padding: 0; transform: none !important; }
+            .page { box-shadow: none; page-break-after: always; margin: 0; }
+            .label { border: 1pt solid black; }
             @page { size: A4 portrait; margin: 0; }
         }
     </style>
@@ -229,20 +133,39 @@
 
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>Tạo Tem Giường</h2>
+            <h2>Cấu hình Tem Giường</h2>
         </div>
         <div class="sidebar-content">
+            
+            <!-- BẢNG NHẬP DỮ LIỆU MỚI -->
             <div class="form-group">
-                <label>Nội dung đơn vị (Dòng 2)</label>
-                <input type="text" id="unit" value="CAO HỌC 38" oninput="generateLabels()">
+                <label>Danh sách học sinh (Có thể Paste từ Excel)</label>
+                <div class="table-wrapper">
+                    <table id="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tên học sinh</th>
+                                <th>Lớp / Đơn vị</th>
+                                <th style="width: 40px; text-align: center;">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Dòng mặc định -->
+                            <tr>
+                                <td><input type="text" class="inp-name" value="NGUYỄN VĂN A" oninput="generateLabels()"></td>
+                                <td><input type="text" class="inp-unit" value="CĐ1 - C152" oninput="generateLabels()"></td>
+                                <td><button class="btn-del-row" onclick="deleteRow(this)">X</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-actions">
+                    <button class="btn-sm" onclick="addRow('', '')">+ Thêm dòng mới</button>
+                    <button class="btn-sm" onclick="clearTable()">Xóa toàn bộ</button>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Danh sách tên (Mỗi tên 1 dòng)</label>
-                <textarea id="names" oninput="generateLabels()">NGUYỄN VĂN Ý
-TRẦN NINH ĐẠT
-NGUYỄN TRONG NGHĨA</textarea>
-            </div>
+            <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
 
             <div class="form-row">
                 <div class="form-group">
@@ -255,8 +178,6 @@ NGUYỄN TRONG NGHĨA</textarea>
                 </div>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid #e5e7eb; width: 100%; margin: 5px 0;">
-
             <div class="form-row">
                 <div class="form-group">
                     <label>Cao chữ 1 (cm)</label>
@@ -264,14 +185,14 @@ NGUYỄN TRONG NGHĨA</textarea>
                 </div>
                 <div class="form-group">
                     <label>Co ngang 1 (%)</label>
-                    <input type="number" id="s1" step="5" value="70" oninput="updateStyles()">
+                    <input type="number" id="s1" step="5" value="60" oninput="updateStyles()">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Cao chữ 2 (cm)</label>
-                    <input type="number" id="h2" step="0.1" value="0.6" oninput="updateStyles()">
+                    <input type="number" id="h2" step="0.1" value="0.5" oninput="updateStyles()">
                 </div>
                 <div class="form-group">
                     <label>Co ngang 2 (%)</label>
@@ -292,19 +213,17 @@ NGUYỄN TRONG NGHĨA</textarea>
         </div>
         
         <div class="btn-group">
-            <button class="btn-generate" onclick="generateLabels()">Cập nhật</button>
-            <button class="btn-print" onclick="window.print()">In PDF / A4</button>
+            <button class="action-btn btn-generate" onclick="generateLabels()">Cập nhật (Preview)</button>
+            <button class="action-btn btn-print" onclick="window.print()">In PDF / A4</button>
         </div>
     </div>
 
     <div class="preview-wrapper" id="preview-wrapper">
-        <div id="print-area">
-            <!-- Trang in được tạo tự động -->
-        </div>
+        <div id="print-area"></div>
     </div>
 
     <script>
-        // Cập nhật các biến CSS dựa trên input
+        // Cập nhật biến CSS
         function updateStyles() {
             const root = document.documentElement;
             root.style.setProperty('--h1', document.getElementById('h1').value + 'cm');
@@ -316,18 +235,14 @@ NGUYỄN TRONG NGHĨA</textarea>
             root.style.setProperty('--bm', document.getElementById('bm').value + 'cm');
         }
 
-        // Tự động thu nhỏ trang A4 cho vừa màn hình điện thoại
+        // Tự động scale trên mobile
         function adjustScaleForMobile() {
             const wrapper = document.getElementById('preview-wrapper');
             const printArea = document.getElementById('print-area');
             const wrapperWidth = wrapper.clientWidth;
-            
-            // Nếu bề ngang màn hình nhỏ hơn trang A4 (khoảng ~800px)
             if (wrapperWidth < 820) {
-                // Tính toán tỷ lệ thu nhỏ (trừ đi 40px lề 2 bên)
-                const scale = (wrapperWidth - 40) / 794; // 21cm ~ 794px
+                const scale = (wrapperWidth - 40) / 794; 
                 printArea.style.transform = `scale(${scale})`;
-                // Thu hẹp chiều cao container để không bị khoảng trống dư thừa
                 printArea.style.marginBottom = `-${(1 - scale) * 100}%`; 
             } else {
                 printArea.style.transform = 'none';
@@ -335,17 +250,67 @@ NGUYỄN TRONG NGHĨA</textarea>
             }
         }
 
-        // Render HTML các tem
-        function generateLabels() {
-            const namesText = document.getElementById('names').value;
-            const names = namesText.split('\n').map(n => n.trim()).filter(n => n !== '');
-            const unit = document.getElementById('unit').value.trim();
-            const copies = parseInt(document.getElementById('copies').value) || 1;
+        // --- CÁC HÀM XỬ LÝ BẢNG DỮ LIỆU ---
+        const tbody = document.getElementById('table-body');
 
+        function addRow(nameVal = '', unitVal = '') {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="inp-name" value="${nameVal}" oninput="generateLabels()"></td>
+                <td><input type="text" class="inp-unit" value="${unitVal}" oninput="generateLabels()"></td>
+                <td><button class="btn-del-row" onclick="deleteRow(this)">X</button></td>
+            `;
+            tbody.appendChild(tr);
+            generateLabels();
+        }
+
+        function deleteRow(btn) {
+            btn.closest('tr').remove();
+            generateLabels();
+        }
+
+        function clearTable() {
+            tbody.innerHTML = '';
+            addRow(); // Giữ lại 1 dòng trắng
+        }
+
+        // Bắt sự kiện Paste để xử lý dán từ Excel
+        tbody.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text');
+            const rows = text.split(/\r\n|\n|\r/);
+            
+            // Xóa dòng trắng đang focus nếu có
+            const currentTr = e.target.closest('tr');
+            const nameInp = currentTr.querySelector('.inp-name').value;
+            const unitInp = currentTr.querySelector('.inp-unit').value;
+            if (nameInp.trim() === '' && unitInp.trim() === '') {
+                currentTr.remove();
+            }
+
+            rows.forEach(row => {
+                const cols = row.split(/\t/); // Phân tách cột bằng tab (chuẩn Excel)
+                if (cols.length > 0 && cols[0].trim() !== '') {
+                    const name = cols[0].trim();
+                    const unit = cols.length > 1 ? cols[1].trim() : '';
+                    addRow(name, unit);
+                }
+            });
+        });
+
+        // Tạo giao diện tem
+        function generateLabels() {
+            const copies = parseInt(document.getElementById('copies').value) || 1;
+            const rows = tbody.querySelectorAll('tr');
             const allLabels = [];
-            names.forEach(name => {
-                for (let i = 0; i < copies; i++) {
-                    allLabels.push(name);
+
+            rows.forEach(row => {
+                const name = row.querySelector('.inp-name').value.trim();
+                const unit = row.querySelector('.inp-unit').value.trim();
+                if (name !== '' || unit !== '') {
+                    for (let i = 0; i < copies; i++) {
+                        allLabels.push({ name, unit });
+                    }
                 }
             });
 
@@ -354,36 +319,30 @@ NGUYỄN TRONG NGHĨA</textarea>
 
             if (allLabels.length === 0) return;
 
-            // Mỗi trang A4 chứa 24 tem (3 cột x 8 hàng)
             for (let i = 0; i < allLabels.length; i += 24) {
                 const pageData = allLabels.slice(i, i + 24);
                 const pageEl = document.createElement('div');
                 pageEl.className = 'page';
 
-                pageData.forEach(name => {
+                pageData.forEach(data => {
                     pageEl.innerHTML += `
                         <div class="label">
                             <div class="inner-border"></div>
                             <div class="text-wrapper">
-                                <div class="line1"><span class="txt-scale1">${name}</span></div>
-                                <div class="line2"><span class="txt-scale2">${unit}</span></div>
+                                <div class="line1"><span class="txt-scale1">${data.name}</span></div>
+                                <div class="line2"><span class="txt-scale2">${data.unit}</span></div>
                             </div>
                         </div>
                     `;
                 });
                 printArea.appendChild(pageEl);
             }
-            
-            // Điều chỉnh tỷ lệ hiển thị sau khi render xong trang
             setTimeout(adjustScaleForMobile, 50);
         }
 
-        // Lắng nghe sự kiện xoay màn hình hoặc đổi kích thước cửa sổ
         window.addEventListener('resize', adjustScaleForMobile);
-
-        // Khởi tạo ban đầu
         updateStyles();
         generateLabels();
     </script>
 </body>
-</html>
+</html> 
