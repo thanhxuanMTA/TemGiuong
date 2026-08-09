@@ -15,7 +15,6 @@
 
         /* ================= BIẾN CSS & CÀI ĐẶT CHUNG ================= */
         :root {
-            /* Đã cập nhật mặc định 0.7cm (~20pt) và 0.5cm (~14pt) */
             --h1: 0.7cm; --s1: 0.6; --h2: 0.5cm; --s2: 0.7; 
             --pt: 0.3cm; --sp: 0.2cm; --bm: 0.4cm; --bt: 1.2mm;
             --theme-color: #0f62fe; --bg-color: #f4f4f4; --dark-bg: #525659;
@@ -133,9 +132,8 @@
         
         .room-list-print { width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 5px; }
         
-        /* Cập nhật font-size 18pt theo yêu cầu */
         .room-row-print {
-            display: grid; grid-template-columns: 40px 1fr 120px; font-size: 18pt; 
+            display: grid; grid-template-columns: 40px 1fr 180px; font-size: 18pt; 
             text-transform: uppercase; align-items: center; line-height: 0.75; white-space: nowrap; 
         }
         .room-row-print > span { padding-top: 12px; padding-bottom: 8px; }
@@ -243,12 +241,11 @@
                 <div id="adv-bed" class="advanced-settings">
                     <div class="form-row">
                         <div class="form-group"><label>Viền cách mép (cm)</label><input type="number" id="bed-bm" step="0.05" value="0.4" oninput="updateBedStyles()"></div>
-                        <div class="form-group"><label>Cách lề trên (cm)</label><input type="number" id="bed-pt" step="0.05" value="0.4" oninput="updateBedStyles()"></div>
+                        <div class="form-group"><label>Cách lề trên (cm)</label><input type="number" id="bed-pt" step="0.05" value="0.3" oninput="updateBedStyles()"></div>
                     </div>
                     <div class="form-row">
-                        <!-- Mặc định 0.7cm (~20pt) và 0.5cm (~14pt) -->
                         <div class="form-group"><label>Cao chữ 1 (cm)</label><input type="number" id="bed-h1" step="0.1" value="0.7" oninput="updateBedStyles()"></div>
-                        <div class="form-group"><label>Co ngang 1 (%)</label><input type="number" id="bed-s1" step="5" value="70" oninput="updateBedStyles()"></div>
+                        <div class="form-group"><label>Co ngang 1 (%)</label><input type="number" id="bed-s1" step="5" value="60" oninput="updateBedStyles()"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Cao chữ 2 (cm)</label><input type="number" id="bed-h2" step="0.1" value="0.5" oninput="updateBedStyles()"></div>
@@ -634,6 +631,7 @@ VŨ VĂN G</textarea>
             generateRoomLabels();
         }
 
+        // Loại bỏ rỗng khi dán từ Excel
         document.getElementById('room-blocks-container').addEventListener('paste', function(e) {
             if (!e.target.classList.contains('r-inp-name') && !e.target.classList.contains('r-inp-unit')) return;
             e.preventDefault();
@@ -650,29 +648,33 @@ VŨ VĂN G</textarea>
             const allRowDivs = Array.from(currentBlock.querySelectorAll('.room-inputs'));
             let currentRow = allRowDivs.indexOf(rowDiv);
 
-            rows.forEach(row => {
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                if (i === rows.length - 1 && row === '') continue; // Bỏ qua dòng xuống hàng cuối cùng của Excel
+
                 const cols = row.split(/\t/);
-                if (cols.length > 0 && cols[0].trim() !== '') {
-                    while (currentBlkIdx >= document.querySelectorAll('.room-block').length) {
-                        addRoomBlock(); 
-                    }
-                    
-                    let targetBlock = document.querySelectorAll('.room-block')[currentBlkIdx];
-                    let targetNames = targetBlock.querySelectorAll('.r-inp-name');
-                    let targetUnits = targetBlock.querySelectorAll('.r-inp-unit');
 
-                    targetNames[currentRow].value = cols[0].trim();
-                    if (cols.length > 1) {
-                        targetUnits[currentRow].value = cols[1].trim();
-                    }
-
-                    currentRow++;
-                    if (currentRow >= capacity) {
-                        currentRow = 0;
-                        currentBlkIdx++;
-                    }
+                while (currentBlkIdx >= document.querySelectorAll('.room-block').length) {
+                    addRoomBlock(); 
                 }
-            });
+                
+                let targetBlock = document.querySelectorAll('.room-block')[currentBlkIdx];
+                let targetNames = targetBlock.querySelectorAll('.r-inp-name');
+                let targetUnits = targetBlock.querySelectorAll('.r-inp-unit');
+
+                targetNames[currentRow].value = cols[0] ? cols[0].trim() : '';
+                if (cols.length > 1) {
+                    targetUnits[currentRow].value = cols[1] ? cols[1].trim() : '';
+                } else {
+                    targetUnits[currentRow].value = '';
+                }
+
+                currentRow++;
+                if (currentRow >= capacity) {
+                    currentRow = 0;
+                    currentBlkIdx++;
+                }
+            }
             generateRoomLabels();
         });
 
@@ -697,15 +699,27 @@ VŨ VĂN G</textarea>
                     if(!names[i]) continue;
                     let n = names[i].value.trim();
                     let u = units[i].value.trim();
-                    if(n !== '') {
-                        if(!tpAssigned) {
+                    
+                    // Nếu có tên (dù có lớp hay không), hoặc có lớp (dù không tên), hoặc là vị trí trống (để giữ layout nếu cần)
+                    // Vì yêu cầu là tôn trọng dòng trống, ta vẫn push một object rỗng để giữ chỗ nếu cần
+                    if (n !== '' || u !== '') {
+                        if (n !== '' && !tpAssigned) {
                             if(u !== '' && !u.includes('(TP)')) u += ' (TP)';
                             if(u === '') u = '(TP)';
                             tpAssigned = true;
                         }
-                        students.push({name: n, unit: u});
+                        students.push({name: n, unit: u, empty: false});
+                    } else {
+                        // Vị trí trống do dán Excel giữ nguyên
+                        students.push({name: '', unit: '', empty: true});
                     }
                 }
+                
+                // Loại bỏ những dòng trống thừa ở cuối phòng để không render dư
+                while(students.length > 0 && students[students.length - 1].empty) {
+                    students.pop();
+                }
+
                 if(students.length > 0) validRooms.push(students);
             });
 
@@ -717,12 +731,28 @@ VŨ VĂN G</textarea>
                 pageData.forEach(roomStudents => {
                     let listHtml = '';
                     roomStudents.forEach((st, idx) => {
-                        listHtml += `
+                        if (st.empty) {
+                            // Dòng trống
+                            listHtml += `
                             <div class="room-row-print">
                                 <span>${idx + 1}.</span>
-                                <span class="r-name">${st.name}</span>
-                                <span class="r-unit">${st.unit}</span>
+                                <span class="r-name"></span>
+                                <span class="r-unit"></span>
                             </div>`;
+                        } else {
+                            let displayUnit = st.unit;
+                            if (displayUnit) {
+                                displayUnit = displayUnit.replace(/^(-\s*)?LỚP\s*/i, '');
+                                displayUnit = `- LỚP ${displayUnit}`;
+                            }
+
+                            listHtml += `
+                                <div class="room-row-print">
+                                    <span>${idx + 1}.</span>
+                                    <span class="r-name">${st.name}</span>
+                                    <span class="r-unit">${displayUnit}</span>
+                                </div>`;
+                        }
                     });
 
                     pageEl.innerHTML += `
@@ -840,4 +870,4 @@ VŨ VĂN G</textarea>
 
     </script>
 </body>
-</html>
+</html> 
