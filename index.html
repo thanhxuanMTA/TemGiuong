@@ -15,7 +15,8 @@
 
         /* ================= BIẾN CSS & CÀI ĐẶT CHUNG ================= */
         :root {
-            --h1: 0.9cm; --s1: 0.6; --h2: 0.5cm; --s2: 0.7; 
+            /* Đã cập nhật mặc định 0.7cm (~20pt) và 0.5cm (~14pt) */
+            --h1: 0.7cm; --s1: 0.6; --h2: 0.5cm; --s2: 0.7; 
             --pt: 0.3cm; --sp: 0.2cm; --bm: 0.4cm; --bt: 1.2mm;
             --theme-color: #0f62fe; --bg-color: #f4f4f4; --dark-bg: #525659;
         }
@@ -126,12 +127,15 @@
         }
         .label-room { width: 15cm; height: 10cm; border: 1pt solid #ccc; box-sizing: border-box; position: relative; background: white; font-family: 'UTM HelvetIns', sans-serif; color: black; padding: 20px; }
         .label-room .inner-border { width: 100%; height: 100%; border: 4pt solid black; box-sizing: border-box; display: flex; flex-direction: column; padding: 15px 20px; }
+        
         .room-title-print { font-size: 28pt; font-weight: normal; margin: 0; padding-bottom: 12px; margin-bottom: 25px; text-align: center; line-height: 1.1; position: relative; }
         .room-title-print::after { content: ""; position: absolute; bottom: 0; left: 25%; width: 50%; height: 2pt; background-color: black; }
         
         .room-list-print { width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 5px; }
+        
+        /* Cập nhật font-size 18pt theo yêu cầu */
         .room-row-print {
-            display: grid; grid-template-columns: 40px 1fr 120px; font-size: 20pt; 
+            display: grid; grid-template-columns: 40px 1fr 120px; font-size: 18pt; 
             text-transform: uppercase; align-items: center; line-height: 0.75; white-space: nowrap; 
         }
         .room-row-print > span { padding-top: 12px; padding-bottom: 8px; }
@@ -154,12 +158,11 @@
             background-color: #27318b; border-radius: 50% / 50%; position: relative;
             display: flex; align-items: center; justify-content: center; box-sizing: border-box;
             overflow: hidden; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-            border: none; /* Loại bỏ viền nhạt hiển thị ở chế độ xem trước */
+            border: none;
         }
         .tag-ellipse::before {
             content: ''; position: absolute; top: 3mm; bottom: 3mm; left: 3mm; right: 3mm;
-            border: 0.75mm solid #ffffff; /* Tăng độ dày viền trắng lên gấp rưỡi (từ 0.5mm lên 0.75mm) */
-            border-radius: 50% / 50%; pointer-events: none;
+            border: 0.75mm solid #ffffff; border-radius: 50% / 50%; pointer-events: none;
         }
         .text-common {
             color: #ffffff !important; font-family: 'UTM HelvetIns', Arial, sans-serif;
@@ -183,7 +186,6 @@
             .app-container, .preview-wrapper { display: block; padding: 0; overflow: visible; height: auto; background: white;}
             .print-area { position: absolute; left: 0; top: 0; width: 100%; gap: 0; margin: 0; padding: 0; transform: none !important; }
             .page-bed, .page-room, .page-helmet { box-shadow: none; page-break-after: always; margin: 0; border: none; }
-            /* Cập nhật viền in: Loại bỏ .tag-ellipse khỏi thuộc tính vẽ viền đen */
             .label-bed, .label-room { border: 1pt solid black; } 
         }
     </style>
@@ -241,11 +243,12 @@
                 <div id="adv-bed" class="advanced-settings">
                     <div class="form-row">
                         <div class="form-group"><label>Viền cách mép (cm)</label><input type="number" id="bed-bm" step="0.05" value="0.4" oninput="updateBedStyles()"></div>
-                        <div class="form-group"><label>Cách lề trên (cm)</label><input type="number" id="bed-pt" step="0.05" value="0.3" oninput="updateBedStyles()"></div>
+                        <div class="form-group"><label>Cách lề trên (cm)</label><input type="number" id="bed-pt" step="0.05" value="0.4" oninput="updateBedStyles()"></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label>Cao chữ 1 (cm)</label><input type="number" id="bed-h1" step="0.1" value="0.9" oninput="updateBedStyles()"></div>
-                        <div class="form-group"><label>Co ngang 1 (%)</label><input type="number" id="bed-s1" step="5" value="60" oninput="updateBedStyles()"></div>
+                        <!-- Mặc định 0.7cm (~20pt) và 0.5cm (~14pt) -->
+                        <div class="form-group"><label>Cao chữ 1 (cm)</label><input type="number" id="bed-h1" step="0.1" value="0.7" oninput="updateBedStyles()"></div>
+                        <div class="form-group"><label>Co ngang 1 (%)</label><input type="number" id="bed-s1" step="5" value="70" oninput="updateBedStyles()"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Cao chữ 2 (cm)</label><input type="number" id="bed-h2" step="0.1" value="0.5" oninput="updateBedStyles()"></div>
@@ -837,4 +840,4 @@ VŨ VĂN G</textarea>
 
     </script>
 </body>
-</html> 
+</html>
